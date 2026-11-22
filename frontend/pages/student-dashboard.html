@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="student-dashboard.html" class="active">Overview</a></li>
+          <li><a href="my-progress.html">Skill Tracker</a></li>
+          <li><a href="roadmap.html">My Roadmap</a></li>
+          <li><a href="course-recommendations.html">Courses</a></li>
+          <li><a href="my-profile.html">Profile</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+      <button class="nav-toggle">&#9776;</button>
+    </div>
+  </header>
+
+  <main class="section" style="padding-top: 40px;">
+    <div class="container">
+      
+      <!-- Welcome Header & Streak Banner -->
+      <div class="card" style="margin-bottom: 32px; padding: 32px; background: #FFFFFF;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+          <div>
+            <span class="label-caps">Student Command Center</span>
+            <h1 id="welcomeHeading" class="headline-lg" style="margin-top:4px; margin-bottom:4px;">Welcome back!</h1>
+            <p id="studentSubtext" class="body-md">Class 10th &bull; CBSE Board &bull; Fixed Career Mode</p>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:20px;">
+            <!-- Learning Streak Pill -->
+            <div style="display:flex; align-items:center; gap:10px; background:#FFFBEB; border:1px solid #FDE68A; padding:10px 18px; border-radius:var(--radius-full);">
+              <span style="font-size:1.5rem;">🔥</span>
+              <div>
+                <div style="font-weight:700; color:#B45309; font-size:1rem;" id="streakCount">1 Day Streak</div>
+                <div class="body-sm" style="font-size:0.75rem; color:#D97706;">Daily Learning Habit</div>
+              </div>
+            </div>
+
+            <a href="career-choice.html" class="btn btn-primary btn-md">New Assessment &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overview Cards Grid -->
+      <div class="grid-3" style="margin-bottom: 32px;">
+        <!-- Card 1: Target Career -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="label-caps" style="margin-bottom:8px;">Target Career</div>
+            <h3 id="targetCareerTitle" class="headline-sm" style="margin-bottom:4px;">Software Developer</h3>
+            <div id="targetCareerCategory" class="body-sm" style="margin-bottom:16px;">Science and Technology</div>
+            <div class="body-sm" style="color:#4B5563;" id="targetCareerSalary">Est: ₹6,00,000 - ₹25,00,000 / year</div>
+          </div>
+          <div style="margin-top:20px;">
+            <a id="btnTargetRoadmap" href="roadmap.html" class="btn btn-secondary btn-sm btn-full">View Stage Roadmap &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Card 2: Latest Compatibility Score -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="label-caps" style="margin-bottom:8px;">Latest Alignment Score</div>
+            <div id="latestScore" style="font-size:2.5rem; font-weight:700; color:var(--color-primary); margin-bottom:4px;">0%</div>
+            <div id="latestAlignmentBadge" class="badge badge-success" style="margin-bottom:12px;">Strong alignment</div>
+            <p class="body-sm" id="latestScoreNote">Based on your recent assessment.</p>
+          </div>
+          <div style="margin-top:20px;">
+            <a id="btnViewReport" href="#" class="btn btn-secondary btn-sm btn-full">Review Full Report &rarr;</a>
+          </div>
+        </div>
+
+        <!-- Card 3: Journey Progress -->
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div class="label-caps" style="margin-bottom:8px;">Milestone Progress</div>
+            <h3 id="milestoneSummary" class="headline-sm" style="margin-bottom:4px;">3 Stages Completed</h3>
+            <p class="body-sm" style="margin-bottom:16px; color:#4B5563;">Track your verified skills and practical evidence.</p>
+            <div style="background:#E5E7EB; border-radius:9999px; height:8px; overflow:hidden;">
+              <div id="milestoneProgressFill" style="background:var(--color-primary); width:60%; height:100%;"></div>
+            </div>
+          </div>
+          <div style="margin-top:20px;">
+            <a href="my-progress.html" class="btn btn-secondary btn-sm btn-full">Update Skill Checklist &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Radar Chart & Recommended Actions -->
+      <div class="grid-2" style="margin-bottom: 32px;">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h2 class="headline-sm">Competency Diagnostics</h2>
+            <span class="badge badge-primary">Chart.js Radar</span>
+          </div>
+          <div style="position:relative; height: 320px; width:100%;">
+            <canvas id="dashRadarChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="headline-sm" style="margin-bottom: 16px;">Personalized Action Items</h2>
+          <div id="dashActions" style="display:flex; flex-direction:column; gap:12px;"></div>
+
+          <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center;">
+            <span class="body-sm">Need to bridge a skill gap?</span>
+            <a href="course-recommendations.html" class="btn btn-primary btn-sm">Find Recommended Courses &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assessment History Table -->
+      <div class="card" style="margin-bottom: 32px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h2 class="headline-sm">Assessment History</h2>
+          <a href="my-assessments.html" style="font-size:0.875rem; color:var(--color-primary);">View All &rarr;</a>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.875rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--color-border); color:var(--color-muted);">
+                <th style="padding:10px;">Session ID</th>
+                <th style="padding:10px;">Target Career</th>
+                <th style="padding:10px;">Decision Mode</th>
+                <th style="padding:10px;">Score</th>
+                <th style="padding:10px;">Report Status</th>
+                <th style="padding:10px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding-top:0;">
+        <div>&copy; 2026 PATHWAY AI. All student data persists permanently in MySQL.</div>
+        <div style="display: flex; gap: 20px;">
+          <a href="my-payments.html">Receipts</a>
+          <a href="settings.html">Account Settings</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    let radarInstance = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!API.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const user = API.getUser();
+        const profile = await API.students.getProfile();
+        const dash = await API.students.getDashboard();
+        const history = await API.assessments.getHistory();
+        const progress = await API.progress.get();
+
+        // Render user headers
+        document.getElementById("welcomeHeading").textContent = `Welcome back, ${profile.full_name}!`;
+        const edu = profile.education;
+        document.getElementById("studentSubtext").textContent = edu ? 
+          `${edu.education_level.replace(/_/g, ' ').toUpperCase()} • ${edu.current_class_year || ''} • ${edu.board_university || ''}` : 
+          'Education Profile Incomplete';
+
+        document.getElementById("streakCount").textContent = `${profile.streak_days} Day Streak`;
+
+        // Target Career
+        if (dash.target_career) {
+          document.getElementById("targetCareerTitle").textContent = dash.target_career.title;
+          document.getElementById("targetCareerCategory").textContent = dash.target_career.category_name;
+          document.getElementById("targetCareerSalary").textContent = `Salary: ${dash.target_career.avg_salary_inr}`;
+          document.getElementById("btnTargetRoadmap").href = `roadmap.html?career_id=${dash.target_career.id}`;
+        } else {
+          document.getElementById("targetCareerTitle").textContent = "Explore Careers";
+          document.getElementById("targetCareerCategory").textContent = "No target set yet";
+          document.getElementById("btnTargetRoadmap").href = "career-choice.html";
+          document.getElementById("btnTargetRoadmap").textContent = "Set Target Career →";
+        }
+
+        // Latest result
+        const lr = dash.latest_result;
+        if (lr) {
+          document.getElementById("latestScore").textContent = `${Math.round(lr.overall_score)}%`;
+          document.getElementById("latestScoreNote").textContent = lr.is_unlocked ? "Full analytical report unlocked ✓" : "Preview mode (₹99 full report available)";
+          document.getElementById("btnViewReport").href = `assessment-result.html?session_id=${lr.session_id}`;
+
+          // Radar
+          renderDashRadar(lr.skill_breakdown);
+
+          // Actions
+          document.getElementById("dashActions").innerHTML = (lr.recommended_actions || []).map(a => `
+            <div style="background:#F8FAFC; border-left:3px solid var(--color-primary); padding:10px 14px; border-radius:var(--radius-sm); font-size:0.875rem;">
+              ${a}
+            </div>
+          `).join("");
+        } else {
+          document.getElementById("latestScore").textContent = "--";
+          document.getElementById("latestScoreNote").textContent = "No assessments taken yet.";
+          document.getElementById("btnViewReport").style.display = "none";
+          renderDashRadar({});
+        }
+
+        // Milestone progress
+        const completedCount = (progress.completed_stage_ids || []).length;
+        document.getElementById("milestoneSummary").textContent = `${completedCount} Stages Completed`;
+        document.getElementById("milestoneProgressFill").style.width = `${Math.min(100, completedCount * 25)}%`;
+
+        // History Table
+        renderHistoryTable(history);
+
+      } catch (err) {
+        showToast("Error loading dashboard: " + err.message, "error");
+      }
+    });
+
+    function renderDashRadar(skillMap) {
+      const labels = Object.keys(skillMap || {});
+      const values = Object.values(skillMap || {});
+
+      const chartLabels = labels.length ? labels : ["Logical Reasoning", "Numerical Aptitude", "Verbal Ability", "Problem Solving", "Domain Interest"];
+      const chartValues = values.length ? values : [70, 75, 65, 80, 70];
+
+      const ctx = document.getElementById("dashRadarChart").getContext("2d");
+      if (radarInstance) radarInstance.destroy();
+
+      radarInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: chartLabels,
+          datasets: [{
+            label: 'Skill Proficiency (%)',
+            data: chartValues,
+            backgroundColor: 'rgba(0, 113, 227, 0.2)',
+            borderColor: '#0071E3',
+            pointBackgroundColor: '#0071E3'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: { suggestedMin: 20, suggestedMax: 100, ticks: { stepSize: 20 } }
+          }
+        }
+      });
+    }
+
+    function renderHistoryTable(sessions) {
+      const tbody = document.getElementById("historyTableBody");
+      if (!sessions || sessions.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="padding:20px; text-align:center; color:var(--color-muted);">No assessment sessions on record.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = sessions.map(s => `
+        <tr style="border-bottom:1px solid var(--color-border);">
+          <td style="padding:12px 10px; font-weight:600;">#${s.session_id}</td>
+          <td style="padding:12px 10px;">${s.target_career}</td>
+          <td style="padding:12px 10px;"><span class="badge">${s.mode.toUpperCase()}</span></td>
+          <td style="padding:12px 10px; font-weight:700; color:var(--color-primary);">${s.overall_score ? Math.round(s.overall_score) + '%' : 'In Progress'}</td>
+          <td style="padding:12px 10px;">
+            <span class="badge ${s.is_unlocked ? 'badge-success' : 'badge-warning'}">
+              ${s.is_unlocked ? 'Unlocked ✓' : 'Preview'}
+            </span>
+          </td>
+          <td style="padding:12px 10px;">
+            <a href="assessment-result.html?session_id=${s.session_id}" class="btn btn-secondary btn-sm" style="height:28px; padding:0 12px; font-size:0.75rem;">
+              View Report &rarr;
+            </a>
+          </td>
+        </tr>
+      `).join("");
+    }
+  </script>
+</body>
+</html>

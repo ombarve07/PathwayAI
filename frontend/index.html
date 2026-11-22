@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PATHWAY AI - Discover Your Potential. Build Your Future.</title>
+  <meta name="description" content="AI-powered career guidance, skill evaluation and verified Indian education roadmaps for students.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+   
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="brand-logo">
+        <img src="assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="pages/careers.html">Explore Careers</a></li>
+          <li><a href="pages/how-it-works.html">How It Works</a></li>
+          <li><a href="pages/about.html">About Us</a></li>
+          <li><a href="pages/contact.html">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="pages/login.html" class="btn btn-secondary btn-sm">Login</a>
+        <a href="pages/register.html" class="btn btn-primary btn-sm">Get Started</a>
+      </div>
+
+      <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+    </div>
+  </header>
+
+  <!-- 1. Hero Section -->
+  <section class="section section-hero">
+    <!-- Ambient Floating Blur Blobs -->
+    <div class="hero-glow-blob hero-glow-blob-1"></div>
+    <div class="hero-glow-blob hero-glow-blob-2"></div>
+
+    <!-- Interactive Neural Pathway Particle Canvas -->
+    <canvas id="heroPathwayCanvas" class="hero-canvas"></canvas>
+
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        <span>AI Career Guidance • Tailored for Indian Students</span>
+      </div>
+
+      <h1 class="headline-display" style="margin-bottom: 24px; max-width: 900px; margin-left: auto; margin-right: auto;">
+        Your Future. Your Skills. Your PATHWAY.
+      </h1>
+
+      <p class="body-lg" style="max-width: 680px; margin-left: auto; margin-right: auto; margin-bottom: 36px;">
+        Discover careers that match your authentic potential and get a personalized, step-by-step roadmap to achieve them in the Indian education system.
+      </p>
+
+      <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+        <a href="pages/register.html" class="btn btn-primary btn-lg">Get Started with PATHWAY AI</a>
+        <a href="pages/careers.html" class="btn btn-secondary btn-lg">Explore 30 Careers</a>
+      </div>
+
+      <!-- Live Interactive Pathway AI Simulator Unit -->
+      <div id="heroSimulator" class="hero-showcase">
+        <!-- Floating Glass Badges -->
+        <div class="hero-floating-badge badge-left">
+          <span>✨</span>
+          <span>30 Verified Indian Career Maps</span>
+        </div>
+        <div class="hero-floating-badge badge-right">
+          <span>🎯</span>
+          <span>Adaptive 8th to College Engine</span>
+        </div>
+
+        <!-- Simulator Header -->
+        <div class="sim-header">
+          <div class="sim-engine-tag">
+            <div class="sim-engine-icon">⚡</div>
+            <div>
+              <span>Live AI Career Synthesizer</span>
+              <span id="simPersonaBadge" class="badge badge-primary" style="margin-left: 8px; font-size: 0.6875rem;">Foundation Stage</span>
+            </div>
+          </div>
+          <div id="simChips" class="sim-chips">
+            <!-- Populated dynamically via hero-animation.js -->
+          </div>
+        </div>
+
+        <!-- 3-Column Interactive Grid -->
+        <div class="sim-grid">
+          <!-- Col 1: Aptitude & Skill Profile -->
+          <div class="sim-panel">
+            <div class="sim-panel-title">
+              <span>Evaluated Aptitudes</span>
+              <span style="color:var(--color-success); font-size:0.75rem;">● Verified</span>
+            </div>
+            <div id="simSkills">
+              <!-- Dynamically populated -->
+            </div>
+            <div style="font-size:0.75rem; color:var(--color-muted); border-top:1px dashed var(--color-border); padding-top:10px; margin-top:8px;">
+              <span>Assessment: </span><strong style="color:var(--color-text);">Transparent scoring (No fake IQ)</strong>
+            </div>
+          </div>
+
+          <!-- Col 2: Step-by-Step Indian Roadmap -->
+          <div class="sim-panel">
+            <div class="sim-panel-title">
+              <span>Dynamic Pathway Roadmap</span>
+              <span class="badge badge-purple" style="font-size:0.6875rem;">Stage 1 &rarr; 4</span>
+            </div>
+            <div id="simPathwaySteps" class="sim-pathway-steps">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Col 3: Recommended Career Match -->
+          <div class="sim-match-panel">
+            <div class="sim-meter-wrap">
+              <svg class="sim-meter-svg" viewBox="0 0 86 86">
+                <circle cx="43" cy="43" r="35" stroke="rgba(0, 113, 227, 0.12)" stroke-width="6" fill="none" />
+                <circle id="simMatchCircle" cx="43" cy="43" r="35" stroke="url(#heroGrad)" stroke-width="6" fill="none"
+                  stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="20" style="transition: stroke-dashoffset 0.8s cubic-bezier(0.16,1,0.3,1);" />
+                <defs>
+                  <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0071E3" />
+                    <stop offset="100%" stop-color="#8057E8" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div id="simMatchScore" class="sim-match-score">96.4%</div>
+            </div>
+
+            <div id="simCareerIcon" class="sim-career-icon">🤖</div>
+            <div id="simCareerTitle" class="sim-career-title">Artificial Intelligence Engineer</div>
+            <div id="simCareerCategory" class="sim-career-meta">Science &amp; Technology</div>
+            <div id="simCareerSalary" style="font-size:0.8125rem; font-weight:700; color:var(--color-text); margin-bottom:8px;">₹14 - 38 LPA</div>
+            <div id="simCareerExam" class="sim-career-tag">JEE Advanced / B.Tech AI</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Trust Indicators -->
+      <div style="margin-top: 54px; display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; color: var(--color-muted); font-size: 0.875rem;">
+        <div><span>&#10003;</span> Verified Indian Entrance Exams</div>
+        <div><span>&#10003;</span> Transparent Skill Scoring</div>
+        <div><span>&#10003;</span> Permanent Profile Persistence</div>
+        <div><span>&#10003;</span> Adapts to 8th–College Students</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. How PATHWAY AI Works -->
+  <section class="section" style="background-color: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 48px;">
+        <span class="label-caps">How It Works</span>
+        <h2 class="headline-lg" style="margin-top: 8px;">A 4-Step Intelligent Journey to Clarity</h2>
+      </div>
+
+      <div class="grid-4">
+        <div class="card" style="text-align: left;">
+          <div class="badge badge-primary" style="margin-bottom: 16px;">Step 1</div>
+          <h3 class="headline-sm" style="margin-bottom: 10px;">Select Education Level</h3>
+          <p class="body-sm">From 8th–10th standard up to college graduation, assessments adapt specifically to your academic background.</p>
+        </div>
+
+        <div class="card" style="text-align: left;">
+          <div class="badge badge-primary" style="margin-bottom: 16px;">Step 2</div>
+          <h3 class="headline-sm" style="margin-bottom: 10px;">Pick Career Mode</h3>
+          <p class="body-sm">Choose Fixed (target known), Not Fixed (open discovery), or Career Clarity (comparing options).</p>
+        </div>
+
+        <div class="card" style="text-align: left;">
+          <div class="badge badge-primary" style="margin-bottom: 16px;">Step 3</div>
+          <h3 class="headline-sm" style="margin-bottom: 10px;">Take AI Assessment</h3>
+          <p class="body-sm">Engage in transparent aptitude, interest, technical fundamentals, and situational problem-solving questions.</p>
+        </div>
+
+        <div class="card" style="text-align: left;">
+          <div class="badge badge-primary" style="margin-bottom: 16px;">Step 4</div>
+          <h3 class="headline-sm" style="margin-bottom: 10px;">Execute Your Roadmap</h3>
+          <p class="body-sm">Unlock personalized Indian pathways, entrance exam timelines, skill-gap courses, and track milestone progress.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Choose Your Education Level -->
+  <section class="section">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 48px;">
+        <span class="label-caps">Tailored Academic Pathways</span>
+        <h2 class="headline-lg" style="margin-top: 8px;">Choose Your Education Level</h2>
+        <p class="body-md" style="margin-top: 8px;">PATHWAY AI recalibrates guidance questions and eligibility rules based on where you are.</p>
+      </div>
+
+      <div class="grid-4">
+        <div class="card card-interactive" onclick="window.location.href='pages/register.html?level=school_8_10'">
+          <div style="font-size: 2rem; margin-bottom: 12px;">🎒</div>
+          <h3 class="headline-sm" style="margin-bottom: 6px;">School (8th–10th)</h3>
+          <p class="body-sm" style="margin-bottom: 16px;">Discover natural interests and select the best 11th standard stream (Science, Commerce, Arts).</p>
+          <span style="color: var(--color-primary); font-size: 0.875rem; font-weight: 500;">Start Level Guidance &rarr;</span>
+        </div>
+
+        <div class="card card-interactive" onclick="window.location.href='pages/register.html?level=school_11_12'">
+          <div style="font-size: 2rem; margin-bottom: 12px;">🔬</div>
+          <h3 class="headline-sm" style="margin-bottom: 6px;">Higher Secondary (11th–12th)</h3>
+          <p class="body-sm" style="margin-bottom: 16px;">Navigate competitive entrance exams (JEE, NEET, CLAT, CA Foundation, CUET) with exact timelines.</p>
+          <span style="color: var(--color-primary); font-size: 0.875rem; font-weight: 500;">Start Level Guidance &rarr;</span>
+        </div>
+
+        <div class="card card-interactive" onclick="window.location.href='pages/register.html?level=diploma'">
+          <div style="font-size: 2rem; margin-bottom: 12px;">⚙️</div>
+          <h3 class="headline-sm" style="margin-bottom: 6px;">Polytechnic / Diploma</h3>
+          <p class="body-sm" style="margin-bottom: 16px;">Explore direct 2nd-year B.Tech lateral entry, core engineering specializations, or industry roles.</p>
+          <span style="color: var(--color-primary); font-size: 0.875rem; font-weight: 500;">Start Level Guidance &rarr;</span>
+        </div>
+
+        <div class="card card-interactive" onclick="window.location.href='pages/register.html?level=college_grad'">
+          <div style="font-size: 2rem; margin-bottom: 12px;">🎓</div>
+          <h3 class="headline-sm" style="margin-bottom: 6px;">College & Graduation</h3>
+          <p class="body-sm" style="margin-bottom: 16px;">Bridge industry skill gaps, identify high-growth careers, prepare for UPSC/CAT, or secure placements.</p>
+          <span style="color: var(--color-primary); font-size: 0.875rem; font-weight: 500;">Start Level Guidance &rarr;</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Explore 30 Career Opportunities -->
+  <section class="section" style="background-color: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);">
+    <div class="container">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;">
+        <div>
+          <span class="label-caps">Verified Career Catalogue</span>
+          <h2 class="headline-lg" style="margin-top: 8px;">Explore 30 Indian Career Pathways</h2>
+        </div>
+        <a href="pages/careers.html" class="btn btn-secondary">View All 30 Careers &rarr;</a>
+      </div>
+
+      <div class="grid-2">
+        <!-- Category 1 -->
+        <div class="card" style="border-left: 4px solid var(--color-primary);">
+          <div class="badge badge-primary" style="margin-bottom: 12px;">Category 1</div>
+          <h3 class="headline-sm" style="margin-bottom: 8px;">Science & Technology</h3>
+          <p class="body-sm" style="margin-bottom: 16px;">From Doctor (MBBS) and Artificial Intelligence Engineer to Commercial Pilot and Cybersecurity Analyst.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+            <span class="badge">Doctor (MBBS)</span>
+            <span class="badge">Software Developer</span>
+            <span class="badge">Data Scientist</span>
+            <span class="badge">AI Engineer</span>
+            <span class="badge">Pilot</span>
+            <span class="badge">Biotechnologist</span>
+            <span class="badge">+ 9 more</span>
+          </div>
+          <a href="pages/careers.html?category=science-technology" class="btn btn-secondary btn-sm">Explore Science & Tech Careers &rarr;</a>
+        </div>
+
+        <!-- Category 2 -->
+        <div class="card" style="border-left: 4px solid var(--color-accent-purple);">
+          <div class="badge badge-purple" style="margin-bottom: 12px;">Category 2</div>
+          <h3 class="headline-sm" style="margin-bottom: 8px;">Commerce, Business, Arts & Humanities</h3>
+          <p class="body-sm" style="margin-bottom: 16px;">From Chartered Accountant (CA) and Investment Banker to IAS/IPS Officers, Corporate Lawyers and Designers.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+            <span class="badge">Chartered Accountant (CA)</span>
+            <span class="badge">Investment Banker</span>
+            <span class="badge">Lawyer</span>
+            <span class="badge">IAS Officer</span>
+            <span class="badge">Psychologist</span>
+            <span class="badge">Graphic Designer</span>
+            <span class="badge">+ 9 more</span>
+          </div>
+          <a href="pages/careers.html?category=commerce-business-arts-humanities" class="btn btn-secondary btn-sm">Explore Commerce & Arts Careers &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Why Career Guidance Matters -->
+  <section class="section">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 48px;">
+        <span class="label-caps">Why It Matters</span>
+        <h2 class="headline-lg" style="margin-top: 8px;">Why Structured Career Guidance Matters in India</h2>
+        <p class="body-md" style="margin-top: 8px; max-width: 700px; margin-left: auto; margin-right: auto;">
+          Millions of students pick streams based on herd mentality rather than authentic interest and cognitive ability.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3 class="headline-sm" style="margin-bottom: 8px;">Clear Prerequisite Visibility</h3>
+          <p class="body-sm">Understand official qualifying exams (NEET, JEE, CLAT, NATA, UPSC) and subject eligibility before investing years of preparation.</p>
+        </div>
+        <div class="card">
+          <h3 class="headline-sm" style="margin-bottom: 8px;">Transparent Skill Gap Identification</h3>
+          <p class="body-sm">See exactly which skills you already have, which you lack, and the exact courses or projects needed to bridge the delta.</p>
+        </div>
+        <div class="card">
+          <h3 class="headline-sm" style="margin-bottom: 8px;">Persistent Memory & Tracking</h3>
+          <p class="body-sm">Your assessment history, chosen roadmaps, and skill checklists remain saved permanently in MySQL and accessible whenever you log in.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Demo Testimonials -->
+  <section class="section" style="background-color: var(--color-surface); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <span class="label-caps">Student Experiences</span>
+        <h2 class="headline-lg" style="margin-top: 8px;">What Students Say</h2>
+        <p class="body-sm" style="margin-top: 4px;">(Clearly labelled demo testimonials during early beta)</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <p class="body-md" style="font-style: italic; margin-bottom: 16px;">
+            "I was completely torn between B.Tech CS and BCA after Class 12th. PATHWAY AI's roadmap gave me the exact entrance exam eligibility and skill roadmap for software development."
+          </p>
+          <div style="font-weight: 600; color: var(--color-tertiary);">Rohan Verma</div>
+          <div class="body-sm">Class 12th PCM Student, Pune (Demo Beta Review)</div>
+        </div>
+
+        <div class="card">
+          <p class="body-md" style="font-style: italic; margin-bottom: 16px;">
+            "The distinction between Eligible Now and Future Eligibility was an eye-opener. It helped me realize I could begin CA Foundation registration immediately after 10th."
+          </p>
+          <div style="font-weight: 600; color: var(--color-tertiary);">Ananya Deshmukh</div>
+          <div class="body-sm">Class 10th Student, Mumbai (Demo Beta Review)</div>
+        </div>
+
+        <div class="card">
+          <p class="body-md" style="font-style: italic; margin-bottom: 16px;">
+            "The analytical radar chart showed my aptitude in quantitative modeling was high, but my Python knowledge had a gap. The recommended SWAYAM course helped me fix it."
+          </p>
+          <div style="font-weight: 600; color: var(--color-tertiary);">Priya Nambiar</div>
+          <div class="body-sm">B.Sc. Statistics Graduate, Bengaluru (Demo Beta Review)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Frequently Asked Questions -->
+  <section class="section">
+    <div class="container container-narrow">
+      <div style="text-align: center; margin-bottom: 48px;">
+        <span class="label-caps">FAQ</span>
+        <h2 class="headline-lg" style="margin-top: 8px;">Frequently Asked Questions</h2>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="card">
+          <h3 class="headline-sm" style="margin-bottom: 8px;">Does PATHWAY AI replace clinical psychological testing?</h3>
+          <p class="body-sm">No. PATHWAY AI provides transparent, rule-based vocational interest and cognitive aptitude alignment tools. We never diagnose clinical conditions or claim IQ validation.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="headline-sm" style="margin-bottom: 8px;">Can I view my past assessments after logging in again?</h3>
+          <p class="body-sm">Yes! Every assessment attempt, chosen roadmap, skill progress, and payment receipt is saved permanently in the database and retrieved automatically upon login.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="headline-sm" style="margin-bottom: 8px;">How does the ₹99 Analytics Report purchase work?</h3>
+          <p class="body-sm">Students can take the assessment and preview results for free. A one-time fee of ₹99 unlocks the complete analytical dashboard, radar chart breakdowns, and customized gap action plan in Razorpay test mode.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="headline-sm" style="margin-bottom: 8px;">Are the career eligibility rules verified?</h3>
+          <p class="body-sm">Yes. All requirements link back to official statutory bodies such as NMC, AICTE, NTA, ICAI, ICSI, DGCA, and UPSC with documented verification dates.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="section" style="background-color: var(--color-tertiary); color: #FFFFFF; text-align: center; padding: 60px 0;">
+    <div class="container">
+      <h2 class="headline-lg" style="color: #FFFFFF; margin-bottom: 16px;">Ready to Discover Your Potential?</h2>
+      <p class="body-lg" style="color: #D1D5DB; margin-bottom: 32px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        Join thousands of Indian students building clear, purposeful careers with PATHWAY AI.
+      </p>
+      <a href="pages/register.html" class="btn btn-primary btn-lg">Begin Free Assessment &rarr;</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom: 12px;">
+            <div class="brand-icon">
+          <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="44" height="44" rx="11" fill="url(#pLogoBg)" />
+            <path d="M8 36L36 8" stroke="rgba(255,255,255,0.12)" stroke-width="1.2" stroke-dasharray="2 3" />
+            <path d="M12 32.5V13.5C12 11.8 13.3 10.5 15 10.5H23.5C27.6 10.5 31 13.9 31 18C31 22.1 27.6 25.5 23.5 25.5H16.5" stroke="url(#pPathRibbon)" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12 28V16" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="2 3" opacity="0.8" />
+            <circle cx="12" cy="32.5" r="2.2" fill="#00F5D4" stroke="#FFFFFF" stroke-width="1.2" />
+            <circle cx="23.5" cy="25.5" r="2" fill="#38BDF8" stroke="#FFFFFF" stroke-width="1" />
+            <circle cx="31" cy="11.5" r="4.5" fill="url(#pStarGlow)" opacity="0.9" />
+            <path d="M31 7.5L32.1 10.4L35 11.5L32.1 12.6L31 15.5L29.9 12.6L27 11.5L29.9 10.4Z" fill="#FFFFFF" />
+            <defs>
+              <linearGradient id="pLogoBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#0F172A" />
+                <stop offset="55%" stop-color="#0052B4" />
+                <stop offset="100%" stop-color="#0071E3" />
+              </linearGradient>
+              <linearGradient id="pPathRibbon" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#00F5D4" />
+                <stop offset="45%" stop-color="#38BDF8" />
+                <stop offset="80%" stop-color="#818CF8" />
+                <stop offset="100%" stop-color="#C084FC" />
+              </linearGradient>
+              <radialGradient id="pStarGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#FFFFFF" />
+                <stop offset="40%" stop-color="#67E8F9" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#38BDF8" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+        <span class="brand-text">PATHWAY<span class="brand-ai">AI</span></span>
+          </div>
+          <p class="body-sm" style="margin-bottom: 16px;">
+            Empowering Indian students with transparent AI career guidance, verifiable roadmaps, and structured skill development.
+          </p>
+          <div class="body-sm">&copy; 2026 PATHWAY AI. All rights reserved.</div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <ul class="footer-links">
+            <li><a href="pages/careers.html">All 30 Professions</a></li>
+            <li><a href="pages/careers.html?category=science-technology">Science & Technology</a></li>
+            <li><a href="pages/careers.html?category=commerce-business-arts-humanities">Commerce & Arts</a></li>
+            <li><a href="pages/how-it-works.html">Assessment Methodology</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Student Tools</h4>
+          <ul class="footer-links">
+            <li><a href="pages/student-dashboard.html">Student Dashboard</a></li>
+            <li><a href="pages/my-progress.html">Skill Tracker</a></li>
+            <li><a href="pages/course-recommendations.html">Recommended Courses</a></li>
+            <li><a href="pages/login.html">Sign In</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <ul class="footer-links">
+            <li><a href="pages/about.html">About Us</a></li>
+            <li><a href="pages/privacy.html">Privacy Policy (DPDP)</a></li>
+            <li><a href="pages/terms.html">Terms of Service</a></li>
+            <li><a href="pages/admin-login.html">Admin Portal</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/hero-animation.js"></script>
+</body>
+</html>

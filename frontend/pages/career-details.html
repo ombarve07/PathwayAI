@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Career Details - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="../index.html">Home</a></li>
+          <li><a href="careers.html" class="active">Explore Careers</a></li>
+          <li><a href="how-it-works.html">How It Works</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-secondary btn-sm">Login</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Get Started</a>
+      </div>
+      <button class="nav-toggle">&#9776;</button>
+    </div>
+  </header>
+
+  <!-- Career Details Container -->
+  <main class="section">
+    <div class="container">
+      <div id="loading" style="text-align: center; padding: 60px; color: var(--color-muted);">
+        Loading detailed career profile...
+      </div>
+
+      <div id="careerContent" style="display: none;">
+        <!-- Top Career Hero Card -->
+        <div class="card" style="margin-bottom: 32px; padding: 36px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+            <div>
+              <span id="cCategory" class="badge badge-primary" style="margin-bottom:12px;">Category</span>
+              <h1 id="cTitle" class="headline-lg" style="margin-bottom: 8px;">Career Title</h1>
+              <p id="cSummary" class="body-lg" style="max-width: 800px;">Summary overview</p>
+            </div>
+            <div style="text-align: right;">
+              <button id="btnAssessThisCareer" class="btn btn-primary btn-lg" style="margin-bottom: 8px;">Assess Fit for This Career</button>
+              <div id="cGrowth" class="body-sm" style="color:var(--color-success); font-weight: 600;">High Growth</div>
+            </div>
+          </div>
+
+          <!-- Quick Stat Pill Bar -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--color-border);">
+            <div>
+              <div class="label-caps">Avg Salary in India</div>
+              <div id="cSalary" style="font-weight: 700; font-size: 1.125rem; color: var(--color-tertiary); margin-top: 4px;">₹6,00,000 - ₹20,00,000</div>
+            </div>
+            <div>
+              <div class="label-caps">Min Education Level</div>
+              <div id="cMinEdu" style="font-weight: 700; font-size: 1.125rem; color: var(--color-tertiary); margin-top: 4px;">Class 12th</div>
+            </div>
+            <div>
+              <div class="label-caps">Official Regulatory Body</div>
+              <div id="cAuthority" style="font-weight: 700; font-size: 1.125rem; color: var(--color-tertiary); margin-top: 4px;">NMC / AICTE / UPSC</div>
+            </div>
+            <div>
+              <div class="label-caps">Last Verified Date</div>
+              <div id="cVerified" style="font-weight: 700; font-size: 1.125rem; color: var(--color-tertiary); margin-top: 4px;">2026-01-15</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3" style="grid-template-columns: 2fr 1fr; gap: 32px;">
+          <!-- Left Column: What they do, Requirements, Stages -->
+          <div>
+            <!-- What They Do -->
+            <div class="card" style="margin-bottom: 24px;">
+              <h2 class="headline-sm" style="margin-bottom: 12px;">What the Professional Does</h2>
+              <p id="cWhatTheyDo" class="body-md" style="line-height: 1.7;"></p>
+            </div>
+
+            <!-- Stream Flexibility & Academic Requirements -->
+            <div class="card" style="margin-bottom: 24px;">
+              <h2 class="headline-sm" style="margin-bottom: 12px;">Academic Stream Flexibility</h2>
+              <p id="cStreamFlex" class="body-sm" style="margin-bottom: 20px;"></p>
+
+              <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 12px;">Entrance Examinations & Statutory Criteria</h3>
+              <div id="reqList" style="display:flex; flex-direction:column; gap:12px;"></div>
+            </div>
+
+            <!-- 5-Stage Step-by-Step Indian Roadmap -->
+            <div class="card" style="margin-bottom: 24px;">
+              <h2 class="headline-sm" style="margin-bottom: 8px;">Step-by-Step Indian Career Roadmap</h2>
+              <p class="body-sm" style="margin-bottom: 24px;">Adaptive milestone journey from school foundation to professional licensing.</p>
+              
+              <div id="roadmapStages" style="display:flex; flex-direction:column; gap:20px;"></div>
+            </div>
+          </div>
+
+          <!-- Right Column: Skills, Official Link, Recommended Courses -->
+          <div>
+            <!-- Required Skill Profile -->
+            <div class="card" style="margin-bottom: 24px;">
+              <h3 class="headline-sm" style="margin-bottom: 16px;">Assessed Skill Profile</h3>
+              <div id="skillsList" style="display:flex; flex-direction:column; gap:12px;"></div>
+            </div>
+
+            <!-- Official Verification Source -->
+            <div class="card" style="margin-bottom: 24px; background-color: #F8FAFC;">
+              <div class="label-caps" style="margin-bottom: 8px;">Statutory Verification</div>
+              <p class="body-sm" style="margin-bottom: 12px;">
+                Exam schedules and regulatory criteria are synced with official Indian portals.
+              </p>
+              <a id="cOfficialLink" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm btn-full">
+                Visit Official Portal &#8599;
+              </a>
+            </div>
+
+            <!-- Recommended Partner Courses -->
+            <div class="card">
+              <h3 class="headline-sm" style="margin-bottom: 12px;">Target Courses</h3>
+              <p class="body-sm" style="margin-bottom: 16px;">Curated skill-building courses for this profession.</p>
+              <div id="coursesList" style="display:flex; flex-direction:column; gap:12px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding-top:0;">
+        <div>&copy; 2026 PATHWAY AI. Verified Indian Education Pathways.</div>
+        <div style="display: flex; gap: 20px;">
+          <a href="privacy.html">Privacy</a>
+          <a href="terms.html">Terms</a>
+          <a href="contact.html">Support</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    let currentCareer = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const slug = urlParams.get("slug") || "software-developer";
+
+      try {
+        currentCareer = await API.careers.getDetails(slug);
+        const roadmapData = await API.careers.getRoadmap(currentCareer.id);
+        const courses = await API.recommendations.getCourses();
+
+        renderCareer(currentCareer, roadmapData, courses);
+      } catch (err) {
+        document.getElementById("loading").innerHTML = `<span style="color:var(--color-error)">Career not found: ${err.message}</span>`;
+      }
+    });
+
+    function renderCareer(career, roadmap, courses) {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("careerContent").style.display = "block";
+
+      document.title = `${career.title} - Career Pathway | PATHWAY AI`;
+      document.getElementById("cCategory").textContent = career.category_name;
+      document.getElementById("cTitle").textContent = career.title;
+      document.getElementById("cSummary").textContent = career.summary;
+      document.getElementById("cGrowth").textContent = career.growth_rate;
+      document.getElementById("cSalary").textContent = career.avg_salary_inr;
+      document.getElementById("cMinEdu").textContent = career.min_education_level.replace("_", " ").toUpperCase();
+      document.getElementById("cAuthority").textContent = career.official_authority_name || "Statutory Board";
+      document.getElementById("cVerified").textContent = career.last_verified_date || "2026-01-15";
+      document.getElementById("cWhatTheyDo").textContent = career.what_they_do;
+      document.getElementById("cStreamFlex").textContent = career.stream_flexibility || "Open across multiple academic disciplines with prerequisite coursework.";
+
+      // Button: Assess Fit for this Career
+      document.getElementById("btnAssessThisCareer").addEventListener("click", () => {
+        if (!API.isAuthenticated()) {
+          window.location.href = `register.html?target_career=${career.id}`;
+        } else {
+          window.location.href = `career-choice.html?target_career=${career.id}`;
+        }
+      });
+
+      // Official Link
+      const offLink = document.getElementById("cOfficialLink");
+      if (career.official_source_url) {
+        offLink.href = career.official_source_url;
+        offLink.textContent = `Visit ${career.official_authority_name || 'Official Portal'} ↗`;
+      } else {
+        offLink.style.display = "none";
+      }
+
+      // Requirements
+      const reqList = document.getElementById("reqList");
+      reqList.innerHTML = career.requirements.map(r => `
+        <div style="background-color: var(--color-neutral); padding: 12px 16px; border-radius: var(--radius-sm); border-left: 3px solid var(--color-primary);">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="color:var(--color-tertiary); font-size:0.9375rem;">${r.title}</strong>
+            <span class="badge ${r.is_mandatory ? 'badge-primary' : ''}">${r.requirement_type.replace('_', ' ').toUpperCase()}</span>
+          </div>
+          <p class="body-sm" style="margin-top: 4px;">${r.description}</p>
+          ${r.official_link ? `<a href="${r.official_link}" target="_blank" style="font-size:0.8125rem; color:var(--color-primary); margin-top:4px; display:inline-block;">Official Guidelines &rarr;</a>` : ''}
+        </div>
+      `).join("");
+
+      // Skills
+      const skillsList = document.getElementById("skillsList");
+      skillsList.innerHTML = career.skills.map(s => `
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:0.875rem; margin-bottom:4px;">
+            <span>${s.skill_name}</span>
+            <span class="body-sm">${s.category}</span>
+          </div>
+          <div style="background:#E5E7EB; border-radius:9999px; height:8px; overflow:hidden;">
+            <div style="background:var(--color-primary); height:100%; width:${Math.min(100, s.importance_weight * 50)}%;"></div>
+          </div>
+        </div>
+      `).join("");
+
+      // Roadmap Stages
+      const roadmapContainer = document.getElementById("roadmapStages");
+      if (roadmap.stages && roadmap.stages.length > 0) {
+        roadmapContainer.innerHTML = roadmap.stages.map(stg => `
+          <div style="display:flex; gap:16px;">
+            <div style="display:flex; flex-direction:column; align-items:center;">
+              <div style="width:36px; height:36px; border-radius:50%; background:var(--color-primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.875rem;">
+                ${stg.stage_number}
+              </div>
+              <div style="flex:1; width:2px; background:var(--color-border); margin:4px 0;"></div>
+            </div>
+            <div style="flex:1; padding-bottom: 24px;">
+              <h3 style="font-size:1.0625rem; font-weight:600; margin-bottom:4px;">${stg.title}</h3>
+              <p class="body-sm" style="margin-bottom:8px;">${stg.objective}</p>
+              
+              <div style="display:flex; flex-direction:column; gap:4px; font-size:0.8125rem; color:#4B5563;">
+                ${stg.entrance_exams ? `<div><strong>Entrance Exams:</strong> ${stg.entrance_exams}</div>` : ''}
+                ${stg.recommended_subjects ? `<div><strong>Subjects:</strong> ${stg.recommended_subjects}</div>` : ''}
+                ${stg.practical_projects ? `<div><strong>Practical Milestone:</strong> ${stg.practical_projects}</div>` : ''}
+              </div>
+            </div>
+          </div>
+        `).join("");
+      } else {
+        roadmapContainer.innerHTML = `<p class="body-sm">Roadmap stages being verified for this academic year.</p>`;
+      }
+
+      // Recommended Courses
+      const coursesContainer = document.getElementById("coursesList");
+      coursesContainer.innerHTML = courses.slice(0, 3).map(c => `
+        <div style="border:1px solid var(--color-border); padding:12px; border-radius:var(--radius-sm);">
+          <div style="font-size:0.75rem; color:var(--color-primary); font-weight:600;">${c.provider_name}</div>
+          <div style="font-weight:600; font-size:0.875rem; margin:4px 0;">${c.title}</div>
+          <div class="body-sm" style="margin-bottom:8px;">${c.duration} &bull; ${c.is_free ? 'Free Course' : '₹' + c.price_inr}</div>
+          <a href="${c.affiliate_url || c.course_url}" target="_blank" onclick="API.recommendations.recordClick(${c.id})" class="btn btn-secondary btn-sm btn-full" style="font-size:0.8125rem; height:32px;">
+            Enroll / View Details &rarr;
+          </a>
+        </div>
+      `).join("");
+    }
+  </script>
+</body>
+</html>

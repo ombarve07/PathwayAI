@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Partner Courses - PATHWAY AI Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge" style="background:linear-gradient(135deg, #6D28D9, #9333EA);">AI</span> <span class="brand-admin-badge">ADMIN</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="admin-dashboard.html">Overview</a></li>
+          <li><a href="manage-students.html">Students</a></li>
+          <li><a href="manage-careers.html">Manage 30 Careers</a></li>
+          <li><a href="manage-questions.html">Question Bank</a></li>
+          <li><a href="manage-courses.html" class="active">Courses</a></li>
+          <li><a href="manage-revenue.html">Revenue & Pricing</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 32px; flex-wrap:wrap; gap:16px;">
+        <div>
+          <span class="label-caps">Educational Partnerships</span>
+          <h1 class="headline-lg" style="margin-top: 4px;">Partner Course Catalog</h1>
+          <p class="body-md">Manage external courses, affiliate tracking links, and skill gap mappings.</p>
+        </div>
+        <a href="course-recommendations.html" target="_blank" class="btn btn-secondary btn-md">Student View ↗</a>
+      </div>
+
+      <div class="card" style="padding: 24px;">
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.9375rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--color-border); color:var(--color-muted);">
+                <th style="padding:12px;">ID</th>
+                <th style="padding:12px;">Course Title</th>
+                <th style="padding:12px;">Provider</th>
+                <th style="padding:12px;">Mapped Skills</th>
+                <th style="padding:12px;">Price (INR)</th>
+                <th style="padding:12px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="coursesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const user = API.getUser();
+      if (!user || !user.is_admin) {
+        window.location.href = "admin-login.html";
+        return;
+      }
+
+      try {
+        const courses = await API.recommendations.getCourses();
+        const tbody = document.getElementById("coursesTableBody");
+
+        tbody.innerHTML = courses.map(c => `
+          <tr style="border-bottom: 1px solid var(--color-border);">
+            <td style="padding:14px 12px; font-weight:700;">#${c.id}</td>
+            <td style="padding:14px 12px; font-weight:600; color:var(--color-tertiary);">${c.title}</td>
+            <td style="padding:14px 12px;"><span class="badge badge-primary">${c.provider_name}</span></td>
+            <td style="padding:14px 12px; font-size:0.8125rem;">${c.skills_taught.join(", ")}</td>
+            <td style="padding:14px 12px; font-weight:700;">${c.is_free ? 'FREE' : '₹' + c.price_inr}</td>
+            <td style="padding:14px 12px;">
+              <a href="${c.course_url}" target="_blank" class="btn btn-secondary btn-sm" style="height:28px; padding:0 10px; font-size:0.75rem;">
+                Visit ↗
+              </a>
+            </td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        showToast("Error loading courses: " + err.message, "error");
+      }
+    });
+  </script>
+</body>
+</html>

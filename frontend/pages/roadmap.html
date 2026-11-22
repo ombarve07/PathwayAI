@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalized Career Roadmap - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+      <div class="nav-actions">
+        <a href="student-dashboard.html" class="btn btn-secondary btn-sm">My Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width: 860px;">
+      
+      <!-- Career Selector Bar -->
+      <div class="card" style="margin-bottom: 32px; padding: 24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div>
+          <span class="label-caps">Personalized Milestone Roadmap</span>
+          <h1 id="roadmapCareerTitle" class="headline-sm" style="margin-top:4px;">Loading Roadmap...</h1>
+        </div>
+        <div style="min-width: 250px;">
+          <select id="roadmapCareerSelector" class="form-control" onchange="switchRoadmap()"></select>
+        </div>
+      </div>
+
+      <!-- Roadmap Stages Container -->
+      <div id="stagesContainer" style="display:flex; flex-direction:column; gap:24px;"></div>
+
+      <!-- Action Footer -->
+      <div style="text-align:center; margin-top:40px;">
+        <a href="course-recommendations.html" class="btn btn-primary btn-lg">Explore Skill Courses for this Roadmap &rarr;</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    let currentCareerId = 4; // Software Developer default
+    let completedStageIds = [];
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!API.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Check URL param or profile target career
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramCareerId = urlParams.get("career_id");
+      if (paramCareerId) {
+        currentCareerId = parseInt(paramCareerId);
+      } else {
+        const profile = await API.students.getProfile();
+        if (profile.target_career_id) {
+          currentCareerId = profile.target_career_id;
+        }
+      }
+
+      // Load careers for selector
+      const careers = await API.careers.list();
+      const selector = document.getElementById("roadmapCareerSelector");
+      selector.innerHTML = careers.map(c => `
+        <option value="${c.id}" ${c.id === currentCareerId ? 'selected' : ''}>${c.title}</option>
+      `).join("");
+
+      // Load progress
+      const prog = await API.progress.get();
+      completedStageIds = prog.completed_stage_ids || [];
+
+      await loadRoadmap(currentCareerId);
+    });
+
+    async function switchRoadmap() {
+      const selectedId = parseInt(document.getElementById("roadmapCareerSelector").value);
+      currentCareerId = selectedId;
+      await loadRoadmap(selectedId);
+    }
+
+    async function loadRoadmap(careerId) {
+      try {
+        const roadmapData = await API.careers.getRoadmap(careerId);
+        document.getElementById("roadmapCareerTitle").textContent = roadmapData.career_title;
+        renderStages(roadmapData.stages);
+      } catch (err) {
+        showToast("Error loading roadmap: " + err.message, "error");
+      }
+    }
+
+    function renderStages(stages) {
+      const container = document.getElementById("stagesContainer");
+      if (!stages || stages.length === 0) {
+        container.innerHTML = `<div class="card"><p class="body-md">Roadmap stages being verified for this career.</p></div>`;
+        return;
+      }
+
+      container.innerHTML = stages.map(s => {
+        const isDone = completedStageIds.includes(s.id);
+        return `
+          <div class="card" style="padding: 32px; border-left: 4px solid ${isDone ? '#10B981' : 'var(--color-primary)'};">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; flex-wrap:wrap; gap:12px;">
+              <div>
+                <span class="badge ${isDone ? 'badge-success' : 'badge-primary'}" style="margin-bottom:6px;">Stage ${s.stage_number}</span>
+                <h3 class="headline-sm">${s.title}</h3>
+              </div>
+              <label class="form-checkbox" style="background:#F3F4F6; padding:8px 14px; border-radius:var(--radius-full); font-weight:500;">
+                <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleStage(${s.id}, this.checked)">
+                <span>${isDone ? 'Completed ✓' : 'Mark Stage as Done'}</span>
+              </label>
+            </div>
+
+            <p class="body-md" style="margin-bottom:16px; color:#374151;">${s.objective}</p>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; background:#F8FAFC; padding:16px; border-radius:var(--radius-sm); font-size:0.875rem;">
+              ${s.recommended_subjects ? `<div><strong>Recommended Subjects:</strong><div class="body-sm" style="margin-top:2px;">${s.recommended_subjects}</div></div>` : ''}
+              ${s.entrance_exams ? `<div><strong>Entrance Exams:</strong><div class="body-sm" style="margin-top:2px; color:var(--color-primary); font-weight:600;">${s.entrance_exams}</div></div>` : ''}
+              ${s.resources ? `<div><strong>Key Resources:</strong><div class="body-sm" style="margin-top:2px;">${s.resources}</div></div>` : ''}
+              ${s.practical_projects ? `<div><strong>Hands-On Milestone:</strong><div class="body-sm" style="margin-top:2px;">${s.practical_projects}</div></div>` : ''}
+            </div>
+
+            <div style="margin-top:16px; display:flex; justify-content:space-between; align-items:center; font-size:0.8125rem; color:var(--color-muted);">
+              <div>Expected Outcome: <strong>${s.expected_outcome || 'Milestone qualification'}</strong></div>
+              ${s.official_source_url ? `<a href="${s.official_source_url}" target="_blank" style="color:var(--color-primary);">Official Guidelines ↗</a>` : ''}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function toggleStage(stageId, isCompleted) {
+      try {
+        await API.progress.updateRoadmap(stageId, isCompleted);
+        if (isCompleted) {
+          if (!completedStageIds.includes(stageId)) completedStageIds.push(stageId);
+          showToast("Milestone completed! Great progress.", "success");
+        } else {
+          completedStageIds = completedStageIds.filter(id => id !== stageId);
+        }
+        await loadRoadmap(currentCareerId);
+      } catch (err) {
+        showToast("Error updating milestone: " + err.message, "error");
+      }
+    }
+  </script>
+</body>
+</html>

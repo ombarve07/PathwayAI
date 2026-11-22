@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Your Account - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+      <div class="nav-actions">
+        <span class="body-sm">Already registered?</span>
+        <a href="login.html" class="btn btn-secondary btn-sm">Sign In</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width: 520px;">
+      <div class="card" style="padding: 40px;">
+        <div style="text-align: center; margin-bottom: 28px;">
+          <span class="label-caps">Step 1 of 4</span>
+          <h1 class="headline-sm" style="margin-top: 4px; font-size: 1.5rem;">Create Your Student Account</h1>
+          <p class="body-sm" style="margin-top: 4px;">Save your career assessments and personalized roadmaps permanently.</p>
+        </div>
+
+        <form id="registerForm">
+          <div class="form-group">
+            <label class="form-label" for="fullName">Full Name *</label>
+            <input type="text" id="fullName" class="form-control" placeholder="e.g. Aarav Sharma" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address *</label>
+            <input type="email" id="email" class="form-control" placeholder="aarav@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="mobile">Mobile Number (India +91)</label>
+            <input type="tel" id="mobile" class="form-control" placeholder="+91 98765 43210">
+          </div>
+
+          <div class="grid-2" style="gap: 16px;">
+            <div class="form-group">
+              <label class="form-label" for="dob">Date of Birth</label>
+              <input type="date" id="dob" class="form-control" value="2008-01-01">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select id="eduLevelQuick" class="form-control">
+                <option value="school_8_10">School (8th–10th)</option>
+                <option value="school_11_12">Higher Sec (11th–12th)</option>
+                <option value="diploma">Polytechnic / Diploma</option>
+                <option value="college_grad">College / Graduation</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2" style="gap: 16px;">
+            <div class="form-group">
+              <label class="form-label" for="password">Password *</label>
+              <input type="password" id="password" class="form-control" placeholder="••••••••" required minlength="6">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="confirmPassword">Confirm Password *</label>
+              <input type="password" id="confirmPassword" class="form-control" placeholder="••••••••" required minlength="6">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 12px;">
+            <label class="form-checkbox">
+              <input type="checkbox" id="guardianConsent" checked>
+              <span>I confirm parent / guardian consent if under 18 years of age (Indian DPDP framework).</span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-checkbox">
+              <input type="checkbox" id="termsCheck" required checked>
+              <span>I agree to the <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Policy</a>.</span>
+            </label>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn btn-primary btn-full btn-lg" style="margin-top: 8px;">
+            Continue to Education Details &rarr;
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Pre-select education level if passed via URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const level = urlParams.get("level");
+      if (level) {
+        document.getElementById("eduLevelQuick").value = level;
+      }
+
+      const form = document.getElementById("registerForm");
+      const btn = document.getElementById("submitBtn");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const pwd = document.getElementById("password").value;
+        const confirmPwd = document.getElementById("confirmPassword").value;
+
+        if (pwd !== confirmPwd) {
+          showToast("Passwords do not match. Please re-enter.", "error");
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Creating Account...";
+
+        try {
+          const payload = {
+            full_name: document.getElementById("fullName").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            password: pwd,
+            mobile: document.getElementById("mobile").value.trim() || null,
+            dob: document.getElementById("dob").value || null,
+            guardian_consent: document.getElementById("guardianConsent").checked
+          };
+
+          const res = await API.auth.register(payload);
+          showToast("Account created successfully! Welcome to PATHWAY AI.", "success");
+
+          const selectedLevel = document.getElementById("eduLevelQuick").value;
+          const targetCareer = urlParams.get("target_career");
+          const query = targetCareer ? `?level=${selectedLevel}&target_career=${targetCareer}` : `?level=${selectedLevel}`;
+
+          setTimeout(() => {
+            window.location.href = `education-details.html${query}`;
+          }, 800);
+
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = "Continue to Education Details →";
+          showToast(err.message, "error");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Curated Course Recommendations - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+      <div class="nav-actions">
+        <a href="student-dashboard.html" class="btn btn-secondary btn-sm">My Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div style="text-align: center; margin-bottom: 40px; max-width: 750px; margin-left: auto; margin-right: auto;">
+        <span class="label-caps">Targeted Skill Bridges</span>
+        <h1 class="headline-lg" style="margin-top: 8px;">Recommended Partner Courses</h1>
+        <p class="body-md" style="margin-top: 8px;">
+          High-yield courses mapped directly to your assessed skill gaps from Indian government portals (SWAYAM / NPTEL) and global university partners.
+        </p>
+
+        <!-- Affiliate Disclosure -->
+        <div style="margin-top: 16px; background:#F8FAFC; border: 1px solid var(--color-border); padding: 8px 16px; border-radius: var(--radius-full); display: inline-block; font-size: 0.75rem; color: var(--color-muted);">
+          Transparency Disclosure: PATHWAY AI may receive educational partner commissions on paid enrollments at zero additional cost to you. Free government courses are ranked purely on merit.
+        </div>
+      </div>
+
+      <!-- Skill Gap Filter Bar -->
+      <div class="card" style="margin-bottom: 32px; padding: 20px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <div style="font-weight:600; font-size:0.9375rem;">Filter by Skill Focus:</div>
+          <div id="filterPills" style="display:flex; flex-wrap:wrap; gap:8px;">
+            <button class="btn btn-primary btn-sm active" onclick="filterCourses('')">All Courses</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterCourses('Algorithmic Thinking')">Algorithmic Thinking</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterCourses('Python & Programming')">Python & Programming</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterCourses('Financial Acumen')">Financial Acumen</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterCourses('Biology Fundamentals')">Biology Fundamentals</button>
+            <button class="btn btn-secondary btn-sm" onclick="filterCourses('Legal Argumentation')">Legal Argumentation</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Course Grid -->
+      <div id="courseGrid" class="grid-3" style="gap: 24px;"></div>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none; padding-top:0;">
+        <div>&copy; 2026 PATHWAY AI. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    let allCourses = [];
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      allCourses = await API.recommendations.getCourses();
+      renderCourses(allCourses);
+    });
+
+    function filterCourses(skill) {
+      document.querySelectorAll("#filterPills button").forEach(btn => {
+        btn.classList.remove("btn-primary");
+        btn.classList.add("btn-secondary");
+      });
+      event.target.classList.remove("btn-secondary");
+      event.target.classList.add("btn-primary");
+
+      if (!skill) {
+        renderCourses(allCourses);
+      } else {
+        const filtered = allCourses.filter(c => c.skills_taught.includes(skill));
+        renderCourses(filtered);
+      }
+    }
+
+    function renderCourses(courses) {
+      const grid = document.getElementById("courseGrid");
+      if (courses.length === 0) {
+        grid.innerHTML = `<div class="card" style="grid-column: 1 / -1; text-align: center; padding: 40px;"><p class="body-md">No courses found matching this specific skill filter.</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = courses.map(c => `
+        <div class="card" style="display:flex; flex-direction:column; justify-content:space-between; padding:28px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span class="badge badge-primary">${c.provider_name}</span>
+              <span class="badge ${c.is_free ? 'badge-success' : 'badge-purple'}">${c.is_free ? 'FREE' : '₹' + c.price_inr}</span>
+            </div>
+
+            <h3 class="headline-sm" style="margin-bottom:8px; font-size:1.125rem;">${c.title}</h3>
+            <p class="body-sm" style="margin-bottom:16px; color:#4B5563; min-height:48px; line-height:1.5;">${c.description}</p>
+
+            <!-- Why Recommended Box -->
+            <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:16px;">
+              <div style="font-size:0.75rem; font-weight:700; color:#166534; text-transform:uppercase;">Why Recommended:</div>
+              <div style="font-size:0.8125rem; color:#15803D; margin-top:2px;">${c.why_recommended}</div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:6px; font-size:0.8125rem; color:var(--color-muted); margin-bottom:20px;">
+              <div><strong>Skills:</strong> ${c.skills_taught.join(", ")}</div>
+              <div><strong>Duration:</strong> ${c.duration} &bull; <strong>Difficulty:</strong> ${c.difficulty}</div>
+              <div><strong>Certificate:</strong> ${c.certificate_info}</div>
+            </div>
+          </div>
+
+          <a href="${c.affiliate_url || c.course_url}" target="_blank" onclick="API.recommendations.recordClick(${c.id})" class="btn btn-primary btn-full">
+            Enroll on Partner Site &rarr;
+          </a>
+        </div>
+      `).join("");
+    }
+  </script>
+</body>
+</html>

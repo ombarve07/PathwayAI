@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+      <div class="nav-actions">
+        <span class="body-sm">New to PATHWAY?</span>
+        <a href="register.html" class="btn btn-secondary btn-sm">Get Started</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width: 440px;">
+      <div class="card" style="padding: 40px;">
+        <div style="text-align: center; margin-bottom: 28px;">
+          <h1 class="headline-sm" style="font-size: 1.5rem;">Welcome Back</h1>
+          <p class="body-sm" style="margin-top: 4px;">Sign in to access your assessments, roadmaps, and progress.</p>
+        </div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="form-label" for="email">Email Address</label>
+            <input type="email" id="email" class="form-control" placeholder="name@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <label class="form-label" for="password" style="margin-bottom:0;">Password</label>
+              <a href="forgot-password.html" style="font-size:0.8125rem;">Forgot Password?</a>
+            </div>
+            <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn btn-primary btn-full btn-lg" style="margin-top: 12px;">
+            Sign In to Dashboard &rarr;
+          </button>
+        </form>
+
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--color-border); text-align: center;">
+          <div class="body-sm" style="margin-bottom: 8px;">Demo Accounts:</div>
+          <button type="button" class="btn btn-tertiary btn-sm" onclick="quickFill('aarav.sharma@example.com', 'Password@123')">Aarav (Student)</button>
+          <button type="button" class="btn btn-tertiary btn-sm" onclick="quickFill('admin@pathway.ai', 'Admin@12345')">Admin Portal</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    function quickFill(email, pwd) {
+      document.getElementById("email").value = email;
+      document.getElementById("password").value = pwd;
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "Signing In...";
+
+      try {
+        const email = document.getElementById("email").value.trim();
+        const pwd = document.getElementById("password").value;
+
+        const res = await API.auth.login({ email, password: pwd });
+        showToast("Signed in successfully!", "success");
+
+        if (res.is_admin) {
+          setTimeout(() => { window.location.href = "admin-dashboard.html"; }, 600);
+          return;
+        }
+
+        // Fetch student profile to route to the correct step
+        const profile = await API.students.getProfile();
+        setTimeout(() => {
+          if (profile.current_journey_step === "registered") {
+            window.location.href = "education-details.html";
+          } else if (profile.current_journey_step === "education_set") {
+            window.location.href = "career-choice.html";
+          } else {
+            window.location.href = "student-dashboard.html";
+          }
+        }, 600);
+
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = "Sign In to Dashboard →";
+        showToast(err.message, "error");
+      }
+    });
+  </script>
+</body>
+</html>

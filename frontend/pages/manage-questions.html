@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Question Bank - PATHWAY AI Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge" style="background:linear-gradient(135deg, #6D28D9, #9333EA);">AI</span> <span class="brand-admin-badge">ADMIN</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="admin-dashboard.html">Overview</a></li>
+          <li><a href="manage-students.html">Students</a></li>
+          <li><a href="manage-careers.html">Manage 30 Careers</a></li>
+          <li><a href="manage-questions.html" class="active">Question Bank</a></li>
+          <li><a href="manage-revenue.html">Revenue & Pricing</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 32px; flex-wrap:wrap; gap:16px;">
+        <div>
+          <span class="label-caps">Assessment Intelligence Bank</span>
+          <h1 class="headline-lg" style="margin-top: 4px;">Question Bank Management</h1>
+          <p class="body-md">Extensible question repository covering aptitude, interests, technical, and situational judgement.</p>
+        </div>
+        <button onclick="openModal('addQModal')" class="btn btn-primary btn-md">+ Add New Question</button>
+      </div>
+
+      <div class="card" style="padding: 24px;">
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.9375rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--color-border); color:var(--color-muted);">
+                <th style="padding:12px;">ID</th>
+                <th style="padding:12px;">Category</th>
+                <th style="padding:12px;">Skill Dimension</th>
+                <th style="padding:12px;">Question Text</th>
+                <th style="padding:12px;">Options Count</th>
+              </tr>
+            </thead>
+            <tbody id="questionsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Add Question Modal -->
+      <div id="addQModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 650px;">
+          <button class="modal-close" onclick="closeModal('addQModal')">&times;</button>
+          <h2 class="headline-sm" style="margin-bottom: 16px;">Add Question to Bank</h2>
+
+          <form id="addQForm">
+            <div class="grid-2" style="gap:16px;">
+              <div class="form-group">
+                <label class="form-label">Category *</label>
+                <select id="qCat" class="form-control">
+                  <option value="aptitude">Aptitude (Numerical/Logical)</option>
+                  <option value="interest">Interest (Vocational Preferences)</option>
+                  <option value="technical">Technical Domain Fundamentals</option>
+                  <option value="soft_skills">Soft Skills & Situational</option>
+                  <option value="work_preferences">Work Environment Preferences</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Skill Dimension</label>
+                <input type="text" id="qSkill" class="form-control" placeholder="e.g. Algorithmic Thinking">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Question Text *</label>
+              <textarea id="qText" class="form-control" rows="3" required placeholder="Enter the question prompt clearly..."></textarea>
+            </div>
+
+            <div class="grid-2" style="gap:16px;">
+              <div class="form-group">
+                <label class="form-label">Option A *</label>
+                <input type="text" id="optA" class="form-control" required placeholder="Option A text">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Option B *</label>
+                <input type="text" id="optB" class="form-control" required placeholder="Option B text">
+              </div>
+            </div>
+
+            <div class="grid-2" style="gap:16px;">
+              <div class="form-group">
+                <label class="form-label">Option C</label>
+                <input type="text" id="optC" class="form-control" placeholder="Option C text">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Option D</label>
+                <input type="text" id="optD" class="form-control" placeholder="Option D text">
+              </div>
+            </div>
+
+            <div class="grid-2" style="gap:16px;">
+              <div class="form-group">
+                <label class="form-label">Correct Option (for Aptitude)</label>
+                <select id="correctOpt" class="form-control">
+                  <option value="A">Option A</option>
+                  <option value="B">Option B</option>
+                  <option value="C">Option C</option>
+                  <option value="D">Option D</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Scoring Type</label>
+                <select id="qScoringType" class="form-control">
+                  <option value="accuracy">Accuracy (Right/Wrong)</option>
+                  <option value="likert">Likert Scale (1 to 5)</option>
+                  <option value="weighted">Weighted Situational</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Explanation / Solution Notes</label>
+              <input type="text" id="qExpl" class="form-control" placeholder="Clear rationale for the correct answer...">
+            </div>
+
+            <button type="submit" id="btnSaveQ" class="btn btn-primary btn-full btn-lg" style="margin-top:12px;">
+              Save Question to Bank &rarr;
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const user = API.getUser();
+      if (!user || !user.is_admin) {
+        window.location.href = "admin-login.html";
+        return;
+      }
+
+      await loadQuestionsTable();
+
+      document.getElementById("addQForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("btnSaveQ");
+        btn.disabled = true;
+        btn.textContent = "Saving...";
+
+        const correct = document.getElementById("correctOpt").value;
+        const options = [
+          { option_key: "A", text: document.getElementById("optA").value.trim(), score_value: correct === "A" ? 1.0 : 0.0, is_correct: correct === "A" },
+          { option_key: "B", text: document.getElementById("optB").value.trim(), score_value: correct === "B" ? 1.0 : 0.0, is_correct: correct === "B" }
+        ];
+
+        const optC = document.getElementById("optC").value.trim();
+        if (optC) options.push({ option_key: "C", text: optC, score_value: correct === "C" ? 1.0 : 0.0, is_correct: correct === "C" });
+
+        const optD = document.getElementById("optD").value.trim();
+        if (optD) options.push({ option_key: "D", text: optD, score_value: correct === "D" ? 1.0 : 0.0, is_correct: correct === "D" });
+
+        const payload = {
+          category: document.getElementById("qCat").value,
+          skill_name: document.getElementById("qSkill").value.trim() || "General Aptitude",
+          text: document.getElementById("qText").value.trim(),
+          scoring_type: document.getElementById("qScoringType").value,
+          explanation: document.getElementById("qExpl").value.trim(),
+          options: options
+        };
+
+        try {
+          await API.admin.addQuestion(payload);
+          showToast("Question added to bank!", "success");
+          closeModal("addQModal");
+          e.target.reset();
+          await loadQuestionsTable();
+        } catch (err) {
+          showToast(err.message, "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Save Question to Bank →";
+        }
+      });
+    });
+
+    async function loadQuestionsTable() {
+      try {
+        const res = await API.request("/api/admin/questions");
+        const tbody = document.getElementById("questionsTableBody");
+
+        tbody.innerHTML = res.map(q => `
+          <tr style="border-bottom: 1px solid var(--color-border);">
+            <td style="padding:14px 12px; font-weight:700;">#${q.id}</td>
+            <td style="padding:14px 12px;"><span class="badge badge-primary">${q.category.toUpperCase()}</span></td>
+            <td style="padding:14px 12px; font-weight:500;">${q.skill_name || 'General'}</td>
+            <td style="padding:14px 12px; max-width:380px;">${q.text}</td>
+            <td style="padding:14px 12px;"><span class="badge">${q.options_count} Options</span></td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        showToast("Error loading question bank: " + err.message, "error");
+      }
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add("active"); }
+    function closeModal(id) { document.getElementById(id).classList.remove("active"); }
+  </script>
+</body>
+</html>

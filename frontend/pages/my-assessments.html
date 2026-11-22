@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment History - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="student-dashboard.html">Overview</a></li>
+          <li><a href="my-progress.html">Skill Tracker</a></li>
+          <li><a href="roadmap.html">My Roadmap</a></li>
+          <li><a href="course-recommendations.html">Courses</a></li>
+          <li><a href="my-profile.html">Profile</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width: 900px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 32px; flex-wrap:wrap; gap:16px;">
+        <div>
+          <span class="label-caps">Persistent Assessment History</span>
+          <h1 class="headline-lg" style="margin-top: 4px;">Past Assessment Sessions</h1>
+          <p class="body-md">Compare how your demonstrated skills and career clarity have evolved over time.</p>
+        </div>
+        <a href="career-choice.html" class="btn btn-primary btn-md">Take New Assessment &rarr;</a>
+      </div>
+
+      <div class="card" style="padding: 24px;">
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.9375rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--color-border); color:var(--color-muted);">
+                <th style="padding:12px;">Session</th>
+                <th style="padding:12px;">Target / Focus Career</th>
+                <th style="padding:12px;">Mode</th>
+                <th style="padding:12px;">Overall Alignment</th>
+                <th style="padding:12px;">Report Access</th>
+                <th style="padding:12px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="assessmentsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!API.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const history = await API.assessments.getHistory();
+        const tbody = document.getElementById("assessmentsTableBody");
+
+        if (!history || history.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="padding:32px; text-align:center; color:var(--color-muted);">No assessments on record yet. Click above to start your first assessment!</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = history.map(s => `
+          <tr style="border-bottom: 1px solid var(--color-border);">
+            <td style="padding:16px 12px; font-weight:700;">#${s.session_id}</td>
+            <td style="padding:16px 12px; font-weight:500;">${s.target_career}</td>
+            <td style="padding:16px 12px;"><span class="badge">${s.mode.toUpperCase()}</span></td>
+            <td style="padding:16px 12px; font-weight:700; color:var(--color-primary);">${s.overall_score ? Math.round(s.overall_score) + '%' : 'Pending'}</td>
+            <td style="padding:16px 12px;">
+              <span class="badge ${s.is_unlocked ? 'badge-success' : 'badge-warning'}">
+                ${s.is_unlocked ? 'Unlocked ✓' : 'Preview'}
+              </span>
+            </td>
+            <td style="padding:16px 12px;">
+              <a href="assessment-result.html?session_id=${s.session_id}" class="btn btn-secondary btn-sm">
+                Open Report &rarr;
+              </a>
+            </td>
+          </tr>
+        `).join("");
+
+      } catch (err) {
+        showToast("Error loading history: " + err.message, "error");
+      }
+    });
+  </script>
+</body>
+</html>

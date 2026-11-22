@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Receipts - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="student-dashboard.html">Overview</a></li>
+          <li><a href="my-progress.html">Skill Tracker</a></li>
+          <li><a href="roadmap.html">My Roadmap</a></li>
+          <li><a href="course-recommendations.html">Courses</a></li>
+          <li><a href="my-profile.html">Profile</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width: 860px;">
+      <div style="margin-bottom: 32px;">
+        <span class="label-caps">Billing & Receipts</span>
+        <h1 class="headline-lg" style="margin-top: 4px;">Order History</h1>
+        <p class="body-md">Verified Razorpay test transactions and unlocked analytical reports.</p>
+      </div>
+
+      <div class="card" style="padding: 24px;">
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.9375rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--color-border); color:var(--color-muted);">
+                <th style="padding:12px;">Order ID</th>
+                <th style="padding:12px;">Item</th>
+                <th style="padding:12px;">Amount</th>
+                <th style="padding:12px;">Status</th>
+                <th style="padding:12px;">Date</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!API.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const payments = await API.payments.getHistory();
+        const tbody = document.getElementById("paymentsTableBody");
+
+        if (!payments || payments.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="padding:32px; text-align:center; color:var(--color-muted);">No payment transactions found.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = payments.map(p => `
+          <tr style="border-bottom: 1px solid var(--color-border);">
+            <td style="padding:16px 12px; font-family:monospace; font-weight:600;">${p.order_id}</td>
+            <td style="padding:16px 12px;">${p.item_type === 'analytics_report' ? '₹99 Analytics Report Unlock' : 'Premium All-Access Pass'}</td>
+            <td style="padding:16px 12px; font-weight:700; color:var(--color-primary);">₹${p.amount} ${p.currency}</td>
+            <td style="padding:16px 12px;">
+              <span class="badge ${p.status === 'success' ? 'badge-success' : 'badge-warning'}">
+                ${p.status.toUpperCase()}
+              </span>
+            </td>
+            <td style="padding:16px 12px; font-size:0.8125rem; color:var(--color-muted);">${new Date(p.created_at).toLocaleDateString()}</td>
+          </tr>
+        `).join("");
+
+      } catch (err) {
+        showToast("Error loading payments: " + err.message, "error");
+      }
+    });
+  </script>
+</body>
+</html>

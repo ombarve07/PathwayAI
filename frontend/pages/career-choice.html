@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Career Decision Framework - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <style>
+    .category-pills {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .category-pill {
+      padding: 8px 16px;
+      border-radius: 9999px;
+      border: 1.5px solid var(--color-border);
+      background: #FFFFFF;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--color-tertiary);
+      transition: all 0.2s ease;
+    }
+    .category-pill.active {
+      background: var(--color-primary);
+      color: #FFFFFF;
+      border-color: var(--color-primary);
+    }
+    .career-grid-select {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding: 6px;
+    }
+    .career-item-card {
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      background: #FFFFFF;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .career-item-card:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 113, 227, 0.08);
+    }
+    .career-item-card.selected {
+      border-color: var(--color-primary);
+      background: rgba(0, 113, 227, 0.04);
+      box-shadow: 0 0 0 1px var(--color-primary);
+    }
+    .clarity-badge-counter {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      background: var(--color-accent-purple);
+      color: #FFFFFF;
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+      <div class="nav-actions">
+        <a href="student-dashboard.html" class="btn btn-secondary btn-sm">My Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width: 960px;">
+      <div style="text-align: center; margin-bottom: 40px;">
+        <span class="label-caps">Step 3 of 4</span>
+        <h1 class="headline-lg" style="margin-top: 8px;">Three Independent Assessment Experiences</h1>
+        <p class="body-lg" style="margin-top: 8px; max-width: 720px; margin-left: auto; margin-right: auto;">
+          Whether you have a target profession in mind, want to weigh 2–3 options, or need full discovery across all 30 careers, our AI engine adapts to your journey.
+        </p>
+      </div>
+
+      <div class="grid-3" style="gap: 24px; margin-bottom: 40px;">
+        <!-- Option 1: Fixed Career -->
+        <div class="card card-interactive choice-card" data-mode="fixed" style="border-top: 5px solid var(--color-primary); display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 2.25rem; margin-bottom: 12px;">🎯</div>
+            <div class="badge badge-primary" style="margin-bottom: 8px;">Option 1</div>
+            <h2 class="headline-sm" style="margin-bottom: 8px;">FIXED CAREER</h2>
+            <p class="body-sm" style="margin-bottom: 16px; font-weight: 600; color: var(--color-primary);">
+              "I already have a specific profession in mind."
+            </p>
+            <p class="body-sm" style="color: #4B5563; line-height: 1.6;">
+              Choose from all 30 professions across Science & Tech or Commerce & Arts. Evaluates domain knowledge, eligibility rules, and builds your custom milestone roadmap.
+            </p>
+          </div>
+          <button class="btn btn-primary btn-sm btn-full" style="margin-top: 24px;">Select Profession &rarr;</button>
+        </div>
+
+        <!-- Option 2: Not Fixed -->
+        <div class="card card-interactive choice-card" data-mode="not_fixed" style="border-top: 5px solid #10B981; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 2.25rem; margin-bottom: 12px;">🧭</div>
+            <div class="badge badge-success" style="margin-bottom: 8px;">Option 2</div>
+            <h2 class="headline-sm" style="margin-bottom: 8px;">NOT FIXED</h2>
+            <p class="body-sm" style="margin-bottom: 16px; font-weight: 600; color: #10B981;">
+              "I am confused about my future. Discover my potential."
+            </p>
+            <p class="body-sm" style="color: #4B5563; line-height: 1.6;">
+              Universal question bank evaluating all 15 dimensions: General Aptitude, Logic, Verbal, Spatial, Science, Finance, and Work Preferences to discover your top careers without bias.
+            </p>
+          </div>
+          <button class="btn btn-secondary btn-sm btn-full" style="margin-top: 24px;">Start Universal Discovery &rarr;</button>
+        </div>
+
+        <!-- Option 3: Career Clarity -->
+        <div class="card card-interactive choice-card" data-mode="clarity" style="border-top: 5px solid var(--color-accent-purple); display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size: 2.25rem; margin-bottom: 12px;">⚖️</div>
+            <div class="badge badge-purple" style="margin-bottom: 8px;">Option 3</div>
+            <h2 class="headline-sm" style="margin-bottom: 8px;">CAREER CLARITY</h2>
+            <p class="body-sm" style="margin-bottom: 16px; font-weight: 600; color: var(--color-accent-purple);">
+              "I have 2 or 3 careers in mind, but need clarity."
+            </p>
+            <p class="body-sm" style="color: #4B5563; line-height: 1.6;">
+              Select 2 or 3 professions you are considering. Our comparative engine runs dedicated technical evaluations against universal benchmarks to reveal the clearest path.
+            </p>
+          </div>
+          <button class="btn btn-secondary btn-sm btn-full" style="margin-top: 24px;">Compare 2-3 Careers &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Modal: Fixed Career Selector -->
+      <div id="fixedModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 720px; width: 90%;">
+          <button class="modal-close" onclick="closeModal('fixedModal')">&times;</button>
+          <div class="badge badge-primary" style="margin-bottom: 8px;">Fixed Career Mode</div>
+          <h2 class="headline-sm" style="margin-bottom: 4px;">Select Your Target Profession</h2>
+          <p class="body-sm" style="margin-bottom: 20px;">
+            Choose 1 of the 30 recognized careers across our two core disciplines to take its dedicated assessment:
+          </p>
+
+          <!-- Category filter pills -->
+          <div class="category-pills">
+            <button class="category-pill active" onclick="setFixedCategory('all', this)">All (30 Careers)</button>
+            <button class="category-pill" onclick="setFixedCategory('Science and Technology', this)">A. Science & Technology (15)</button>
+            <button class="category-pill" onclick="setFixedCategory('Commerce, Business, Arts and Humanities', this)">B. Commerce, Business & Arts (15)</button>
+          </div>
+
+          <!-- Search box -->
+          <div class="form-group" style="margin-bottom: 14px;">
+            <input type="text" id="fixedSearchInput" class="form-control" placeholder="Search professions (e.g. Doctor, Software Developer, CA, Lawyer)..." oninput="filterFixedGrid()">
+          </div>
+
+          <!-- Career grid -->
+          <div id="fixedCareerGrid" class="career-grid-select"></div>
+
+          <div style="margin-top: 20px; display:flex; justify-content:space-between; align-items:center;">
+            <div id="selectedFixedCareerLabel" class="body-sm" style="font-weight:600; color:var(--color-primary);">
+              No profession selected
+            </div>
+            <button id="btnConfirmFixed" class="btn btn-primary btn-md" disabled>
+              Begin Dedicated Assessment &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal: Career Clarity Selector (Multi-select 2-3) -->
+      <div id="clarityModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 720px; width: 90%;">
+          <button class="modal-close" onclick="closeModal('clarityModal')">&times;</button>
+          <div class="badge badge-purple" style="margin-bottom: 8px;">Career Clarity Mode</div>
+          <h2 class="headline-sm" style="margin-bottom: 4px;">
+            Select 2 or 3 Careers to Compare
+            <span id="clarityCountBadge" class="clarity-badge-counter">0/3 Selected</span>
+          </h2>
+          <p class="body-sm" style="margin-bottom: 16px;">
+            Pick between 2 and 3 professions from any category. Our engine compares your specific competencies and highlights trade-offs:
+          </p>
+
+          <div class="category-pills">
+            <button class="category-pill active" onclick="setClarityCategory('all', this)">All</button>
+            <button class="category-pill" onclick="setClarityCategory('Science and Technology', this)">Science & Tech</button>
+            <button class="category-pill" onclick="setClarityCategory('Commerce, Business, Arts and Humanities', this)">Commerce & Arts</button>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <input type="text" id="claritySearchInput" class="form-control" placeholder="Search careers to compare..." oninput="filterClarityGrid()">
+          </div>
+
+          <div id="clarityCareerGrid" class="career-grid-select"></div>
+
+          <div style="margin-top: 20px; display:flex; justify-content:space-between; align-items:center;">
+            <div id="claritySelectedSummary" class="body-sm" style="color:var(--color-muted);">
+              Select at least 2 careers (max 3)
+            </div>
+            <button id="btnConfirmClarity" class="btn btn-primary btn-md" disabled>
+              Start Clarity Comparison &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    let careers = [];
+    let selectedFixedCareerId = null;
+    let selectedClarityCareerIds = new Set();
+    let currentFixedCategory = "all";
+    let currentClarityCategory = "all";
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!API.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      careers = await API.careers.list();
+      renderFixedCareerGrid();
+      renderClarityCareerGrid();
+
+      // Check URL for preselected target career
+      const urlParams = new URLSearchParams(window.location.search);
+      const preTarget = urlParams.get("target_career");
+      if (preTarget) {
+        selectedFixedCareerId = parseInt(preTarget);
+        openModal("fixedModal");
+        updateFixedSelection();
+      }
+
+      // Choice Card clicks
+      document.querySelectorAll(".choice-card").forEach(card => {
+        card.addEventListener("click", () => {
+          const mode = card.getAttribute("data-mode");
+          if (mode === "fixed") {
+            openModal("fixedModal");
+          } else if (mode === "clarity") {
+            openModal("clarityModal");
+          } else if (mode === "not_fixed") {
+            startAssessment("not_fixed", null);
+          }
+        });
+      });
+
+      // Confirm Fixed
+      document.getElementById("btnConfirmFixed").addEventListener("click", () => {
+        if (selectedFixedCareerId) {
+          startAssessment("fixed", selectedFixedCareerId);
+        }
+      });
+
+      // Confirm Clarity
+      document.getElementById("btnConfirmClarity").addEventListener("click", () => {
+        const ids = Array.from(selectedClarityCareerIds);
+        if (ids.length >= 2 && ids.length <= 3) {
+          startAssessment("clarity", ids[0], ids);
+        } else {
+          showToast("Please select 2 or 3 careers to compare.", "warning");
+        }
+      });
+    });
+
+    // --- FIXED CAREER GRID ---
+    function renderFixedCareerGrid() {
+      const grid = document.getElementById("fixedCareerGrid");
+      const search = (document.getElementById("fixedSearchInput").value || "").toLowerCase();
+
+      const filtered = careers.filter(c => {
+        const catMatch = (currentFixedCategory === "all" || c.category_name === currentFixedCategory);
+        const searchMatch = !search || c.title.toLowerCase().includes(search) || (c.summary && c.summary.toLowerCase().includes(search));
+        return catMatch && searchMatch;
+      });
+
+      grid.innerHTML = filtered.map(c => `
+        <div class="career-item-card ${selectedFixedCareerId === c.id ? 'selected' : ''}" onclick="selectFixedCareer(${c.id}, '${c.title.replace(/'/g, "\\'")}')">
+          <div>
+            <div style="font-weight: 600; font-size: 0.9375rem; color: var(--color-tertiary);">${c.title}</div>
+            <span class="badge ${c.category_name === 'Science and Technology' ? 'badge-primary' : 'badge-purple'}" style="margin-top: 4px; font-size: 0.75rem;">
+              ${c.category_name === 'Science and Technology' ? 'Sci & Tech' : 'Comm & Arts'}
+            </span>
+          </div>
+          <div style="font-size: 0.75rem; color: var(--color-muted); margin-top: 6px;">
+            ${c.avg_salary_inr || ''}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function setFixedCategory(cat, btn) {
+      currentFixedCategory = cat;
+      document.querySelectorAll("#fixedModal .category-pill").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      renderFixedCareerGrid();
+    }
+
+    function filterFixedGrid() {
+      renderFixedCareerGrid();
+    }
+
+    function selectFixedCareer(id, title) {
+      selectedFixedCareerId = id;
+      updateFixedSelection();
+    }
+
+    function updateFixedSelection() {
+      const c = careers.find(x => x.id === selectedFixedCareerId);
+      const label = document.getElementById("selectedFixedCareerLabel");
+      const btn = document.getElementById("btnConfirmFixed");
+      if (c) {
+        label.textContent = `Selected: ${c.title} (${c.category_name})`;
+        btn.disabled = false;
+      } else {
+        label.textContent = "No profession selected";
+        btn.disabled = true;
+      }
+      renderFixedCareerGrid();
+    }
+
+    // --- CLARITY CAREER GRID ---
+    function renderClarityCareerGrid() {
+      const grid = document.getElementById("clarityCareerGrid");
+      const search = (document.getElementById("claritySearchInput").value || "").toLowerCase();
+
+      const filtered = careers.filter(c => {
+        const catMatch = (currentClarityCategory === "all" || c.category_name === currentClarityCategory);
+        const searchMatch = !search || c.title.toLowerCase().includes(search);
+        return catMatch && searchMatch;
+      });
+
+      grid.innerHTML = filtered.map(c => `
+        <div class="career-item-card ${selectedClarityCareerIds.has(c.id) ? 'selected' : ''}" onclick="toggleClarityCareer(${c.id})">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div style="font-weight: 600; font-size: 0.9375rem; color: var(--color-tertiary);">${c.title}</div>
+              <span class="badge ${c.category_name === 'Science and Technology' ? 'badge-primary' : 'badge-purple'}" style="margin-top: 4px; font-size: 0.75rem;">
+                ${c.category_name === 'Science and Technology' ? 'Sci & Tech' : 'Comm & Arts'}
+              </span>
+            </div>
+            <input type="checkbox" ${selectedClarityCareerIds.has(c.id) ? 'checked' : ''} style="accent-color:var(--color-primary); pointer-events:none;">
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function setClarityCategory(cat, btn) {
+      currentClarityCategory = cat;
+      document.querySelectorAll("#clarityModal .category-pill").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      renderClarityCareerGrid();
+    }
+
+    function filterClarityGrid() {
+      renderClarityCareerGrid();
+    }
+
+    function toggleClarityCareer(id) {
+      if (selectedClarityCareerIds.has(id)) {
+        selectedClarityCareerIds.delete(id);
+      } else {
+        if (selectedClarityCareerIds.size >= 3) {
+          showToast("You can select a maximum of 3 careers to compare.", "warning");
+          return;
+        }
+        selectedClarityCareerIds.add(id);
+      }
+      updateClaritySelection();
+    }
+
+    function updateClaritySelection() {
+      const count = selectedClarityCareerIds.size;
+      document.getElementById("clarityCountBadge").textContent = `${count}/3 Selected`;
+      const btn = document.getElementById("btnConfirmClarity");
+      const summary = document.getElementById("claritySelectedSummary");
+
+      const selectedTitles = careers.filter(c => selectedClarityCareerIds.has(c.id)).map(c => c.title);
+
+      if (count >= 2 && count <= 3) {
+        btn.disabled = false;
+        summary.innerHTML = `<strong style="color:var(--color-primary);">${selectedTitles.join(" vs ")}</strong>`;
+      } else {
+        btn.disabled = true;
+        summary.textContent = count === 1 ? "Select at least 1 more career to compare" : "Select between 2 and 3 careers";
+      }
+      renderClarityCareerGrid();
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add("active");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+
+    async function startAssessment(mode, targetCareerId = null, clarityIds = null) {
+      try {
+        const res = await API.assessments.start({
+          mode: mode,
+          target_career_id: targetCareerId,
+          clarity_career_ids: clarityIds
+        });
+        showToast("Assessment initialized. Loading questions...", "success");
+        setTimeout(() => {
+          window.location.href = `assessment.html?session_id=${res.session_id}`;
+        }, 500);
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+  </script>
+</body>
+</html>

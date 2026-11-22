@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Careers - PATHWAY AI Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge" style="background:linear-gradient(135deg, #6D28D9, #9333EA);">AI</span> <span class="brand-admin-badge">ADMIN</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="admin-dashboard.html">Overview</a></li>
+          <li><a href="manage-students.html">Students</a></li>
+          <li><a href="manage-careers.html" class="active">Manage 30 Careers</a></li>
+          <li><a href="manage-questions.html">Question Bank</a></li>
+          <li><a href="manage-revenue.html">Revenue & Pricing</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 32px; flex-wrap:wrap; gap:16px;">
+        <div>
+          <span class="label-caps">Database Career Management</span>
+          <h1 class="headline-lg" style="margin-top: 4px;">Career Catalogue (30 Professions)</h1>
+          <p class="body-md">Add new professions or edit statutory requirements directly in the database without touching frontend code.</p>
+        </div>
+        <button onclick="openModal('addCareerModal')" class="btn btn-primary btn-md">+ Add New Career</button>
+      </div>
+
+      <div class="card" style="padding: 24px;">
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.9375rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--color-border); color:var(--color-muted);">
+                <th style="padding:12px;">ID</th>
+                <th style="padding:12px;">Title</th>
+                <th style="padding:12px;">Category</th>
+                <th style="padding:12px;">Salary Benchmark</th>
+                <th style="padding:12px;">Regulatory Body</th>
+                <th style="padding:12px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="careersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Add Career Modal -->
+      <div id="addCareerModal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 600px;">
+          <button class="modal-close" onclick="closeModal('addCareerModal')">&times;</button>
+          <h2 class="headline-sm" style="margin-bottom: 16px;">Add New Career Profession</h2>
+
+          <form id="addCareerForm">
+            <div class="grid-2" style="gap:16px;">
+              <div class="form-group">
+                <label class="form-label">Profession Title *</label>
+                <input type="text" id="newTitle" class="form-control" required placeholder="e.g. Aerospace Engineer">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Category *</label>
+                <select id="newCatId" class="form-control">
+                  <option value="1">Science and Technology</option>
+                  <option value="2">Commerce, Business, Arts & Humanities</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Summary Overview *</label>
+              <textarea id="newSummary" class="form-control" rows="2" required placeholder="Concise 1-2 sentence overview..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">What the Professional Actually Does *</label>
+              <textarea id="newWhatTheyDo" class="form-control" rows="3" required placeholder="Core daily responsibilities and technical tasks..."></textarea>
+            </div>
+
+            <div class="grid-2" style="gap:16px;">
+              <div class="form-group">
+                <label class="form-label">Average Salary in INR *</label>
+                <input type="text" id="newSalary" class="form-control" value="₹7,00,000 - ₹20,00,000 per annum">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Growth Rate</label>
+                <input type="text" id="newGrowth" class="form-control" value="High (+18% YoY)">
+              </div>
+            </div>
+
+            <div class="grid-2" style="gap:16px;">
+              <div class="form-group">
+                <label class="form-label">Official Regulatory Authority</label>
+                <input type="text" id="newAuth" class="form-control" placeholder="e.g. AICTE / ISRO">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Official Portal URL</label>
+                <input type="url" id="newUrl" class="form-control" placeholder="https://...">
+              </div>
+            </div>
+
+            <button type="submit" id="btnSaveNewCareer" class="btn btn-primary btn-full btn-lg" style="margin-top:12px;">
+              Save Career to Database &rarr;
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const user = API.getUser();
+      if (!user || !user.is_admin) {
+        window.location.href = "admin-login.html";
+        return;
+      }
+
+      await loadCareersTable();
+
+      document.getElementById("addCareerForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("btnSaveNewCareer");
+        btn.disabled = true;
+        btn.textContent = "Saving...";
+
+        try {
+          const payload = {
+            title: document.getElementById("newTitle").value.trim(),
+            category_id: parseInt(document.getElementById("newCatId").value),
+            summary: document.getElementById("newSummary").value.trim(),
+            what_they_do: document.getElementById("newWhatTheyDo").value.trim(),
+            avg_salary_inr: document.getElementById("newSalary").value.trim(),
+            growth_rate: document.getElementById("newGrowth").value.trim(),
+            official_authority_name: document.getElementById("newAuth").value.trim(),
+            official_source_url: document.getElementById("newUrl").value.trim()
+          };
+
+          await API.admin.createCareer(payload);
+          showToast("Career successfully added to database!", "success");
+          closeModal("addCareerModal");
+          e.target.reset();
+          await loadCareersTable();
+        } catch (err) {
+          showToast(err.message, "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Save Career to Database →";
+        }
+      });
+    });
+
+    async function loadCareersTable() {
+      try {
+        const careers = await API.careers.list();
+        const tbody = document.getElementById("careersTableBody");
+
+        tbody.innerHTML = careers.map(c => `
+          <tr style="border-bottom: 1px solid var(--color-border);">
+            <td style="padding:14px 12px; font-weight:700;">#${c.id}</td>
+            <td style="padding:14px 12px; font-weight:600; color:var(--color-tertiary);">${c.title}</td>
+            <td style="padding:14px 12px;"><span class="badge ${c.category_name.includes('Science') ? 'badge-primary' : 'badge-purple'}">${c.category_name}</span></td>
+            <td style="padding:14px 12px;">${c.avg_salary_inr}</td>
+            <td style="padding:14px 12px; font-size:0.8125rem;">${c.official_authority_name || 'Statutory Board'}</td>
+            <td style="padding:14px 12px;">
+              <a href="career-details.html?slug=${c.slug}" target="_blank" class="btn btn-secondary btn-sm" style="height:28px; padding:0 10px; font-size:0.75rem;">
+                View Page ↗
+              </a>
+            </td>
+          </tr>
+        `).join("");
+      } catch (err) {
+        showToast("Error loading careers: " + err.message, "error");
+      }
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add("active"); }
+    function closeModal(id) { document.getElementById(id).classList.remove("active"); }
+  </script>
+</body>
+</html>

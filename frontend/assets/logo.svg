@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38" width="38" height="38" fill="none">
+  <defs>
+    <!-- Foundation Pillar Gradient -->
+    <linearGradient id="pStemGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#0062E0" />
+    </linearGradient>
+
+    <!-- Pathway Loop Gradient -->
+    <linearGradient id="pLoopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0062E0" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
+
+    <!-- Career Trajectory Arrow Gradient -->
+    <linearGradient id="pArrowGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00D2FF" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+  </defs>
+
+  <!-- Left Foundation Pillar -->
+  <rect x="5" y="6" width="6.5" height="26" rx="3.25" fill="url(#pStemGrad)" />
+
+  <!-- Pathway Loop with Clean Transparent Window -->
+  <path fill-rule="evenodd" clip-rule="evenodd" 
+        d="M14.5 6H23C28.2467 6 32.5 10.2533 32.5 15.5C32.5 20.7467 28.2467 25 23 25H14.5C12.8431 25 11.5 23.6569 11.5 22V9C11.5 7.34315 12.8431 6 14.5 6ZM17.5 11.5V19.5H22.5C24.7091 19.5 26.5 17.7091 26.5 15.5C26.5 13.2909 24.7091 11.5 22.5 11.5H17.5Z" 
+        fill="url(#pLoopGrad)" />
+
+  <!-- Ascending North-East Career Trajectory Arrow (↗) -->
+  <path d="M17.5 21L27 11.5M27 11.5H21M27 11.5V17.5" 
+        stroke="url(#pArrowGrad)" 
+        stroke-width="2.6" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+</svg>

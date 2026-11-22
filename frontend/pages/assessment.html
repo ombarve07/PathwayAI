@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adaptive Assessment - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <style>
+    .module-badge-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(0, 113, 227, 0.08);
+      color: var(--color-primary);
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+    }
+    .question-option-card {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background-color: #FFFFFF;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .question-option-card:hover {
+      border-color: var(--color-primary);
+      background-color: rgba(0, 113, 227, 0.02);
+    }
+    .question-option-card.selected {
+      border-color: var(--color-primary);
+      background-color: rgba(0, 113, 227, 0.06);
+      box-shadow: 0 0 0 1px var(--color-primary);
+    }
+  </style>
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar with Assessment Progress Tracker -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+
+      <div style="flex:1; max-width:400px; margin: 0 24px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--color-muted); margin-bottom:4px;">
+          <span id="progressText">Question 1 of 25</span>
+          <span id="percentText">4%</span>
+        </div>
+        <div style="background:#E5E7EB; border-radius:9999px; height:6px; overflow:hidden;">
+          <div id="progressBar" style="background:var(--color-primary); width:4%; height:100%; transition:width 0.3s ease;"></div>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <a href="student-dashboard.html" class="btn btn-outline-dark btn-sm">Save & Exit</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width: 760px;">
+      
+      <div id="loading" style="text-align: center; padding: 60px; color: var(--color-muted);">
+        Preparing your personalized question set...
+      </div>
+
+      <!-- Question Card Container -->
+      <div id="questionContainer" style="display: none;">
+        <div class="card" style="padding: 36px; margin-bottom: 24px;">
+          
+          <!-- Module & Subtopic Indicator -->
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom: 20px;">
+            <span id="qSectionBadge" class="module-badge-indicator">
+              Module 1: General Aptitude
+            </span>
+            <span id="qSkillBadge" class="badge">
+              Numerical Reasoning
+            </span>
+          </div>
+
+          <!-- Question Text -->
+          <h2 id="qText" class="headline-sm" style="margin-bottom: 28px; line-height: 1.5; font-size: 1.25rem;">
+            Loading question...
+          </h2>
+
+          <!-- Options Container -->
+          <div id="optionsContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <button id="btnPrev" class="btn btn-secondary btn-md" style="visibility: hidden;">&larr; Previous</button>
+          <div id="saveStatus" class="body-sm" style="color:var(--color-success);">&#10003; Progress auto-saved</div>
+          <button id="btnNext" class="btn btn-primary btn-md">Next Question &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="noQuestions" style="display: none; text-align: center; padding: 60px;">
+        <h2 class="headline-sm">No questions available for this level</h2>
+        <a href="education-details.html" class="btn btn-primary btn-md" style="margin-top: 16px;">Update Education Level</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    let sessionId = null;
+    let questions = [];
+    let currentIndex = 0;
+    let answeredMap = {};
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!API.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      sessionId = urlParams.get("session_id");
+
+      if (!sessionId) {
+        window.location.href = "career-choice.html";
+        return;
+      }
+
+      try {
+        const res = await API.assessments.getQuestions(sessionId);
+        questions = res.questions;
+        answeredMap = res.answered_map || {};
+
+        if (questions.length === 0) {
+          document.getElementById("loading").style.display = "none";
+          document.getElementById("noQuestions").style.display = "block";
+          return;
+        }
+
+        // Set index to first unanswered question if resuming
+        const firstUnanswered = questions.findIndex(q => !answeredMap[q.id]);
+        if (firstUnanswered !== -1) {
+          currentIndex = firstUnanswered;
+        }
+
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("questionContainer").style.display = "block";
+        renderCurrentQuestion();
+
+      } catch (err) {
+        document.getElementById("loading").innerHTML = `<span style="color:var(--color-error)">Failed to load assessment: ${err.message}</span>`;
+      }
+
+      // Next / Submit Button
+      document.getElementById("btnNext").addEventListener("click", async () => {
+        const selectedOpt = document.querySelector('input[name="optChoice"]:checked');
+        if (!selectedOpt && !answeredMap[questions[currentIndex].id]) {
+          showToast("Please select an answer to proceed.", "warning");
+          return;
+        }
+
+        if (currentIndex < questions.length - 1) {
+          currentIndex++;
+          renderCurrentQuestion();
+        } else {
+          await finalizeAssessment();
+        }
+      });
+
+      // Prev Button
+      document.getElementById("btnPrev").addEventListener("click", () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          renderCurrentQuestion();
+        }
+      });
+    });
+
+    function renderCurrentQuestion() {
+      const q = questions[currentIndex];
+      const total = questions.length;
+
+      // Update progress bar
+      const pct = Math.round(((currentIndex + 1) / total) * 100);
+      document.getElementById("progressText").textContent = `Question ${currentIndex + 1} of ${total}`;
+      document.getElementById("percentText").textContent = `${pct}%`;
+      document.getElementById("progressBar").style.width = `${pct}%`;
+
+      // Update section and skill badges
+      const secTitle = q.section_title || (q.module_name ? `Module ${q.module_number}: ${q.module_name}` : "Assessment");
+      document.getElementById("qSectionBadge").textContent = secTitle;
+      document.getElementById("qSkillBadge").textContent = q.skill_name || (q.sub_topic || "Cognitive Evaluation");
+      document.getElementById("qText").textContent = q.text;
+
+      // Render Options
+      const container = document.getElementById("optionsContainer");
+      const savedChoiceId = answeredMap[q.id];
+
+      container.innerHTML = q.options.map(opt => `
+        <label class="question-option-card ${savedChoiceId === opt.id ? 'selected' : ''}" onclick="handleSelectOption(${q.id}, ${opt.id})">
+          <input type="radio" name="optChoice" value="${opt.id}" ${savedChoiceId === opt.id ? 'checked' : ''} style="accent-color:var(--color-primary); width:18px; height:18px; pointer-events:none;">
+          <span style="font-weight:700; color:var(--color-primary); min-width:20px;">${opt.option_key}.</span>
+          <span style="font-size:0.9375rem; color:var(--color-tertiary); line-height:1.4;">${opt.text}</span>
+        </label>
+      `).join("");
+
+      // Buttons state
+      document.getElementById("btnPrev").style.visibility = currentIndex > 0 ? "visible" : "hidden";
+      const nextBtn = document.getElementById("btnNext");
+      if (currentIndex === total - 1) {
+        nextBtn.textContent = "Submit & View Analytical Report";
+        nextBtn.classList.add("btn-primary");
+      } else {
+        nextBtn.textContent = "Next Question →";
+      }
+    }
+
+    async function handleSelectOption(qId, optId) {
+      answeredMap[qId] = optId;
+      document.getElementById("saveStatus").textContent = "Saving...";
+
+      try {
+        await API.assessments.submitAnswer(sessionId, {
+          question_id: qId,
+          selected_option_id: optId,
+          response_time_seconds: 10
+        });
+        document.getElementById("saveStatus").textContent = "✓ Progress auto-saved";
+        renderCurrentQuestion();
+      } catch (err) {
+        document.getElementById("saveStatus").textContent = "⚠️ Could not save";
+      }
+    }
+
+    async function finalizeAssessment() {
+      const nextBtn = document.getElementById("btnNext");
+      nextBtn.disabled = true;
+      nextBtn.textContent = "Evaluating 15-Module Scoring Engine...";
+
+      try {
+        await API.assessments.complete(sessionId);
+        showToast("Assessment evaluated successfully! Generating report...", "success");
+        setTimeout(() => {
+          window.location.href = `assessment-result.html?session_id=${sessionId}`;
+        }, 800);
+      } catch (err) {
+        nextBtn.disabled = false;
+        nextBtn.textContent = "Submit & View Analytical Report";
+        showToast(err.message, "error");
+      }
+    }
+  </script>
+</body>
+</html>

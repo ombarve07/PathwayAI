@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Education Level - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width: 680px;">
+      <div class="card" style="padding: 40px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+          <span class="label-caps">Step 2 of 4</span>
+          <h1 class="headline-sm" style="font-size: 1.625rem; margin-top: 4px;">Select Your Current Education Level</h1>
+          <p class="body-sm" style="margin-top: 4px;">PATHWAY AI calibrates assessment questions to your exact academic standard.</p>
+        </div>
+
+        <!-- 4 Education Level Tabs -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 28px;">
+          <button type="button" class="btn btn-secondary edu-tab active" data-level="school_8_10" style="height:auto; padding:16px; flex-direction:column; align-items:flex-start;">
+            <div style="font-weight:600; font-size:1rem; color:var(--color-tertiary);">A. School Student</div>
+            <div class="body-sm" style="text-align:left;">Classes 8th to 10th</div>
+          </button>
+
+          <button type="button" class="btn btn-secondary edu-tab" data-level="school_11_12" style="height:auto; padding:16px; flex-direction:column; align-items:flex-start;">
+            <div style="font-weight:600; font-size:1rem; color:var(--color-tertiary);">B. Higher Secondary</div>
+            <div class="body-sm" style="text-align:left;">Classes 11th & 12th (Junior College)</div>
+          </button>
+
+          <button type="button" class="btn btn-secondary edu-tab" data-level="diploma" style="height:auto; padding:16px; flex-direction:column; align-items:flex-start;">
+            <div style="font-weight:600; font-size:1rem; color:var(--color-tertiary);">C. Polytechnic / Diploma</div>
+            <div class="body-sm" style="text-align:left;">Technical & Engineering Diploma</div>
+          </button>
+
+          <button type="button" class="btn btn-secondary edu-tab" data-level="college_grad" style="height:auto; padding:16px; flex-direction:column; align-items:flex-start;">
+            <div style="font-weight:600; font-size:1rem; color:var(--color-tertiary);">D. College / Graduation</div>
+            <div class="body-sm" style="text-align:left;">Undergraduate & Degree Students</div>
+          </button>
+        </div>
+
+        <form id="educationForm">
+          <input type="hidden" id="selectedLevel" value="school_8_10">
+
+          <!-- Section 1: School 8th-10th fields -->
+          <div id="fields_school_8_10" class="level-fields">
+            <div class="grid-2" style="gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">Current Standard *</label>
+                <select id="school_class" class="form-control">
+                  <option value="Class 8th">Class 8th</option>
+                  <option value="Class 9th">Class 9th</option>
+                  <option value="Class 10th" selected>Class 10th (Board Year)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">School Board *</label>
+                <select id="school_board" class="form-control">
+                  <option value="CBSE">CBSE (Central Board)</option>
+                  <option value="ICSE">ICSE / CISCE</option>
+                  <option value="State Board">State Board (SSC)</option>
+                  <option value="IB / Cambridge">IB / Cambridge (IGCSE)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Higher Secondary 11th-12th fields -->
+          <div id="fields_school_11_12" class="level-fields" style="display: none;">
+            <div class="grid-2" style="gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">Current Standard *</label>
+                <select id="hs_class" class="form-control">
+                  <option value="Class 11th">Class 11th</option>
+                  <option value="Class 12th" selected>Class 12th (Board Year)</option>
+                  <option value="Repeater / Dropper">Repeater / Dropper Year</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Academic Stream *</label>
+                <select id="hs_stream" class="form-control">
+                  <option value="Science (PCM - Engineering Track)">Science (PCM - Physics, Chemistry, Math)</option>
+                  <option value="Science (PCB - Medical Track)">Science (PCB - Physics, Chemistry, Biology)</option>
+                  <option value="Science (PCMB - Combined)">Science (PCMB - Combined Math & Biology)</option>
+                  <option value="Commerce (with Math)">Commerce (with Mathematics)</option>
+                  <option value="Commerce (without Math)">Commerce (without Mathematics / SP)</option>
+                  <option value="Arts / Humanities">Arts / Humanities / Social Sciences</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Board / Junior College Council</label>
+              <input type="text" id="hs_board" class="form-control" placeholder="e.g. CBSE, Maharashtra HSC, Karnataka PU">
+            </div>
+          </div>
+
+          <!-- Section 3: Diploma fields -->
+          <div id="fields_diploma" class="level-fields" style="display: none;">
+            <div class="grid-2" style="gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">Diploma Branch *</label>
+                <input type="text" id="diploma_branch" class="form-control" placeholder="e.g. Computer Engineering, Mechanical, Civil">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Current Year / Semester *</label>
+                <select id="diploma_year" class="form-control">
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year (Final Year)">3rd Year (Final Year)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Polytechnic Board / University</label>
+              <input type="text" id="diploma_board" class="form-control" placeholder="e.g. MSBTE, DTE, GTU">
+            </div>
+          </div>
+
+          <!-- Section 4: College & Graduation fields -->
+          <div id="fields_college_grad" class="level-fields" style="display: none;">
+            <div class="grid-2" style="gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">Undergraduate Degree *</label>
+                <input type="text" id="college_degree" class="form-control" placeholder="e.g. B.Tech CS, B.Com, B.Sc Stats, BCA, BBA, BA">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Current Semester / Year *</label>
+                <select id="college_sem" class="form-control">
+                  <option value="Year 1 (Sem 1-2)">Year 1 (Sem 1-2)</option>
+                  <option value="Year 2 (Sem 3-4)">Year 2 (Sem 3-4)</option>
+                  <option value="Year 3 (Sem 5-6)">Year 3 (Sem 5-6)</option>
+                  <option value="Year 4 (Sem 7-8)">Year 4 (Sem 7-8)</option>
+                  <option value="Recent Graduate">Recent Graduate</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">College / University Name</label>
+              <input type="text" id="college_uni" class="form-control" placeholder="e.g. Delhi University, Mumbai University, Anna University">
+            </div>
+          </div>
+
+          <!-- Common Academic Interests -->
+          <div class="form-group">
+            <label class="form-label">Subjects You Genuinely Enjoy / Academic Interests</label>
+            <input type="text" id="academic_interests" class="form-control" placeholder="e.g. Mathematics, Coding, History, Economics, Human Biology, Design">
+            <div class="form-hint">Used by our transparent recommendation engine to align vocational preferences.</div>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn btn-primary btn-full btn-lg" style="margin-top: 12px;">
+            Save & Choose Career Decision Path &rarr;
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Must be authenticated
+      if (!API.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      // Check URL level param
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlLevel = urlParams.get("level");
+      if (urlLevel) {
+        selectLevel(urlLevel);
+      }
+
+      // Tab click events
+      document.querySelectorAll(".edu-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          selectLevel(tab.getAttribute("data-level"));
+        });
+      });
+
+      // Form submission
+      document.getElementById("educationForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("submitBtn");
+        btn.disabled = true;
+        btn.textContent = "Saving Details...";
+
+        const level = document.getElementById("selectedLevel").value;
+        let payload = {
+          education_level: level,
+          academic_interests: document.getElementById("academic_interests").value.trim()
+        };
+
+        if (level === "school_8_10") {
+          payload.current_class_year = document.getElementById("school_class").value;
+          payload.board_university = document.getElementById("school_board").value;
+          payload.subjects = "General Science, Mathematics, Social Studies, English";
+        } else if (level === "school_11_12") {
+          payload.current_class_year = document.getElementById("hs_class").value;
+          payload.stream = document.getElementById("hs_stream").value;
+          payload.board_university = document.getElementById("hs_board").value.trim() || "CBSE/State Board";
+          payload.subjects = payload.stream;
+        } else if (level === "diploma") {
+          payload.diploma_branch = document.getElementById("diploma_branch").value.trim();
+          payload.current_class_year = document.getElementById("diploma_year").value;
+          payload.board_university = document.getElementById("diploma_board").value.trim() || "State Technical Board";
+        } else if (level === "college_grad") {
+          payload.degree = document.getElementById("college_degree").value.trim();
+          payload.semester = document.getElementById("college_sem").value;
+          payload.board_university = document.getElementById("college_uni").value.trim() || "State/Central University";
+        }
+
+        try {
+          await API.students.saveEducation(payload);
+          showToast("Education details saved successfully!", "success");
+
+          const targetCareer = urlParams.get("target_career");
+          const query = targetCareer ? `?target_career=${targetCareer}` : "";
+          setTimeout(() => {
+            window.location.href = `career-choice.html${query}`;
+          }, 600);
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = "Save & Choose Career Decision Path →";
+          showToast(err.message, "error");
+        }
+      });
+    });
+
+    function selectLevel(level) {
+      document.getElementById("selectedLevel").value = level;
+      document.querySelectorAll(".edu-tab").forEach(tab => {
+        if (tab.getAttribute("data-level") === level) {
+          tab.classList.add("btn-primary", "active");
+          tab.classList.remove("btn-secondary");
+          tab.querySelector(".headline-sm, div:first-child").style.color = "#FFFFFF";
+          tab.querySelector(".body-sm").style.color = "rgba(255,255,255,0.85)";
+        } else {
+          tab.classList.remove("btn-primary", "active");
+          tab.classList.add("btn-secondary");
+          tab.querySelector(".headline-sm, div:first-child").style.color = "var(--color-tertiary)";
+          tab.querySelector(".body-sm").style.color = "var(--color-muted)";
+        }
+      });
+
+      document.querySelectorAll(".level-fields").forEach(div => div.style.display = "none");
+      const activeDiv = document.getElementById(`fields_${level}`);
+      if (activeDiv) activeDiv.style.display = "block";
+    }
+  </script>
+</body>
+</html>

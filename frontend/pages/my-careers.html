@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Saved Careers - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="student-dashboard.html">Overview</a></li>
+          <li><a href="my-progress.html">Skill Tracker</a></li>
+          <li><a href="roadmap.html">My Roadmap</a></li>
+          <li><a href="course-recommendations.html">Courses</a></li>
+          <li><a href="my-profile.html">Profile</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 32px; flex-wrap:wrap; gap:16px;">
+        <div>
+          <span class="label-caps">Personal Goals</span>
+          <h1 class="headline-lg" style="margin-top: 4px;">My Careers</h1>
+          <p class="body-md">Your primary target goal and saved career opportunities.</p>
+        </div>
+        <a href="careers.html" class="btn btn-primary btn-md">Explore All 30 Careers &rarr;</a>
+      </div>
+
+      <div id="careersContainer" class="grid-3" style="gap:24px;"></div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!API.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const profile = await API.students.getProfile();
+        const careers = await API.careers.list();
+        const container = document.getElementById("careersContainer");
+
+        // Show target career prominently + top recommended
+        let targetCareer = careers.find(c => c.id === profile.target_career_id);
+        let displayList = [];
+        if (targetCareer) displayList.push({ ...targetCareer, is_target: true });
+        
+        // Add other careers as saved
+        careers.slice(0, 5).forEach(c => {
+          if (!targetCareer || c.id !== targetCareer.id) {
+            displayList.push({ ...c, is_target: false });
+          }
+        });
+
+        container.innerHTML = displayList.map(c => `
+          <div class="card card-interactive" onclick="window.location.href='career-details.html?slug=${c.slug}'">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span class="badge ${c.is_target ? 'badge-primary' : 'badge-purple'}">${c.is_target ? 'PRIMARY TARGET' : 'SAVED'}</span>
+              <span class="badge badge-success">${c.growth_rate}</span>
+            </div>
+            <h3 class="headline-sm" style="margin-bottom:8px;">${c.title}</h3>
+            <p class="body-sm" style="margin-bottom:16px; min-height:40px;">${c.summary}</p>
+            <div style="border-top:1px solid var(--color-border); padding-top:12px; display:flex; justify-content:space-between; align-items:center; font-size:0.8125rem;">
+              <span>Salary: <strong>${c.avg_salary_inr.split('-')[0]}</strong></span>
+              <span style="color:var(--color-primary); font-weight:600;">View Roadmap &rarr;</span>
+            </div>
+          </div>
+        `).join("");
+
+      } catch (err) {
+        showToast("Error loading careers: " + err.message, "error");
+      }
+    });
+  </script>
+</body>
+</html>

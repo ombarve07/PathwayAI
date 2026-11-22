@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="student-dashboard.html">Overview</a></li>
+          <li><a href="my-progress.html">Skill Tracker</a></li>
+          <li><a href="roadmap.html">My Roadmap</a></li>
+          <li><a href="course-recommendations.html">Courses</a></li>
+          <li><a href="my-profile.html" class="active">Profile</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container" style="max-width: 680px;">
+      <div class="card" style="padding: 36px;">
+        <div style="margin-bottom: 24px;">
+          <span class="label-caps">Account & Profile</span>
+          <h1 class="headline-sm" style="margin-top: 4px;">Student Profile</h1>
+          <p class="body-sm">Your persistent academic memory saved in MySQL.</p>
+        </div>
+
+        <form id="profileForm">
+          <div class="grid-2" style="gap:16px;">
+            <div class="form-group">
+              <label class="form-label">Full Name</label>
+              <input type="text" id="profName" class="form-control" readonly style="background:#F9FAFB;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" id="profEmail" class="form-control" readonly style="background:#F9FAFB;">
+            </div>
+          </div>
+
+          <div class="grid-2" style="gap:16px;">
+            <div class="form-group">
+              <label class="form-label">Education Standard</label>
+              <input type="text" id="profEduLevel" class="form-control" readonly style="background:#F9FAFB;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Current Class / Year</label>
+              <input type="text" id="profClass" class="form-control" readonly style="background:#F9FAFB;">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Board / University</label>
+            <input type="text" id="profBoard" class="form-control" readonly style="background:#F9FAFB;">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Target Career Goal</label>
+            <select id="profTargetCareer" class="form-control"></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Bio / Career Aspirations</label>
+            <textarea id="profBio" class="form-control" rows="3" placeholder="Share your long-term career ambition..."></textarea>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px;">
+            <a href="education-details.html" class="btn btn-secondary btn-sm">Update Academic Details &rarr;</a>
+            <button type="submit" id="btnSaveProfile" class="btn btn-primary btn-md">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!API.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const profile = await API.students.getProfile();
+        const careers = await API.careers.list();
+
+        document.getElementById("profName").value = profile.full_name;
+        document.getElementById("profEmail").value = profile.email;
+
+        const edu = profile.education;
+        if (edu) {
+          document.getElementById("profEduLevel").value = edu.education_level.replace(/_/g, ' ').toUpperCase();
+          document.getElementById("profClass").value = edu.current_class_year || 'Not specified';
+          document.getElementById("profBoard").value = edu.board_university || 'Not specified';
+        }
+
+        const careerSelect = document.getElementById("profTargetCareer");
+        careerSelect.innerHTML = careers.map(c => `
+          <option value="${c.id}" ${profile.target_career_id === c.id ? 'selected' : ''}>${c.title} (${c.category_name})</option>
+        `).join("");
+
+        // Handle profile submit
+        document.getElementById("profileForm").addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const btn = document.getElementById("btnSaveProfile");
+          btn.disabled = true;
+          btn.textContent = "Saving...";
+
+          try {
+            const targetId = parseInt(document.getElementById("profTargetCareer").value);
+            const bio = document.getElementById("profBio").value.trim();
+
+            await API.students.updateProfile({
+              target_career_id: targetId,
+              bio: bio
+            });
+
+            showToast("Profile updated successfully!", "success");
+          } catch (err) {
+            showToast(err.message, "error");
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "Save Changes";
+          }
+        });
+
+      } catch (err) {
+        showToast("Error loading profile: " + err.message, "error");
+      }
+    });
+  </script>
+</body>
+</html>

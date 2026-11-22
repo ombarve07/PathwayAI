@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revenue & Dynamic Pricing - PATHWAY AI Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge" style="background:linear-gradient(135deg, #6D28D9, #9333EA);">AI</span> <span class="brand-admin-badge">ADMIN</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="admin-dashboard.html">Overview</a></li>
+          <li><a href="manage-students.html">Students</a></li>
+          <li><a href="manage-careers.html">Manage 30 Careers</a></li>
+          <li><a href="manage-questions.html">Question Bank</a></li>
+          <li><a href="manage-revenue.html" class="active">Revenue & Pricing</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div style="margin-bottom: 32px;">
+        <span class="label-caps">Monetization Engine</span>
+        <h1 class="headline-lg" style="margin-top: 4px;">Dynamic Pricing & Transactions</h1>
+        <p class="body-md">Configure report unlock pricing and view Razorpay verified payment orders.</p>
+      </div>
+
+      <div class="grid-2" style="gap: 24px; margin-bottom: 32px;">
+        <!-- Pricing Config Form -->
+        <div class="card" style="padding: 28px;">
+          <h2 class="headline-sm" style="margin-bottom: 8px;">Configurable Pricing Model</h2>
+          <p class="body-sm" style="margin-bottom: 20px;">Prices are saved in backend settings and applied dynamically without hardcoding.</p>
+
+          <form id="pricingForm">
+            <div class="form-group">
+              <label class="form-label">Single Analytical Report Unlock Price (INR)</label>
+              <input type="number" id="inputReportPrice" class="form-control" step="1" required value="99">
+              <div class="form-hint">Standard launch price: ₹99 for full 15-skill radar & eligibility diagnostics.</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Premium All-Access Pass Price (INR / Year)</label>
+              <input type="number" id="inputPremiumPrice" class="form-control" step="1" required value="999">
+              <div class="form-hint">Annual subscription for unlimited re-assessments and priority features.</div>
+            </div>
+
+            <button type="submit" id="btnSavePricing" class="btn btn-primary btn-md">Update Pricing Rules &rarr;</button>
+          </form>
+        </div>
+
+        <!-- Revenue Summary Box -->
+        <div class="card" style="padding: 28px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <h2 class="headline-sm" style="margin-bottom: 8px;">Razorpay Transaction Status</h2>
+            <p class="body-sm" style="margin-bottom: 24px;">Configured with server-side HMAC-SHA256 signature verification.</p>
+
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="body-sm">Gateway Mode:</span>
+                <span class="badge badge-primary">Test Mode Initialized</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="body-sm">Currency:</span>
+                <strong>INR (₹)</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="body-sm">Payment Signature Verification:</span>
+                <span class="badge badge-success">Backend Enabled ✓</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#F8FAFC; border:1px solid var(--color-border); border-radius:var(--radius-sm); padding:16px; margin-top:20px;">
+            <div class="label-caps">Platform Total Collected</div>
+            <div id="totalGross" style="font-size:2rem; font-weight:700; color:var(--color-primary); margin-top:4px;">₹0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions Table -->
+      <div class="card" style="padding: 24px;">
+        <h2 class="headline-sm" style="margin-bottom: 16px;">Verified Payments Log</h2>
+
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.9375rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--color-border); color:var(--color-muted);">
+                <th style="padding:12px;">Order ID</th>
+                <th style="padding:12px;">Payment ID</th>
+                <th style="padding:12px;">Item Type</th>
+                <th style="padding:12px;">Amount</th>
+                <th style="padding:12px;">Verification Status</th>
+                <th style="padding:12px;">Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="revTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const user = API.getUser();
+      if (!user || !user.is_admin) {
+        window.location.href = "admin-login.html";
+        return;
+      }
+
+      await loadRevenueData();
+
+      document.getElementById("pricingForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const rPrice = parseFloat(document.getElementById("inputReportPrice").value);
+        const pPrice = parseFloat(document.getElementById("inputPremiumPrice").value);
+        const btn = document.getElementById("btnSavePricing");
+        btn.disabled = true;
+
+        try {
+          await API.admin.updatePricing(rPrice, pPrice);
+          showToast("Pricing parameters updated successfully in backend settings!", "success");
+        } catch (err) {
+          showToast(err.message, "error");
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    });
+
+    async function loadRevenueData() {
+      try {
+        const stats = await API.admin.getStats();
+        if (stats.pricing) {
+          document.getElementById("inputReportPrice").value = stats.pricing.report_price_inr;
+          document.getElementById("inputPremiumPrice").value = stats.pricing.premium_price_inr;
+        }
+        document.getElementById("totalGross").textContent = `₹${stats.total_revenue_inr.toLocaleString()}`;
+
+        const payments = await API.admin.getRevenue();
+        const tbody = document.getElementById("revTableBody");
+
+        if (!payments || payments.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="padding:28px; text-align:center; color:var(--color-muted);">No payment orders recorded yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = payments.map(p => `
+          <tr style="border-bottom: 1px solid var(--color-border);">
+            <td style="padding:14px 12px; font-family:monospace; font-weight:600;">${p.order_id}</td>
+            <td style="padding:14px 12px; font-family:monospace; color:var(--color-muted);">${p.payment_id || 'N/A'}</td>
+            <td style="padding:14px 12px;"><span class="badge">${p.item_type}</span></td>
+            <td style="padding:14px 12px; font-weight:700; color:var(--color-primary);">₹${p.amount}</td>
+            <td style="padding:14px 12px;">
+              <span class="badge ${p.status === 'success' ? 'badge-success' : 'badge-warning'}">
+                ${p.status.toUpperCase()}
+              </span>
+            </td>
+            <td style="padding:14px 12px; font-size:0.8125rem; color:var(--color-muted);">${new Date(p.created_at).toLocaleString()}</td>
+          </tr>
+        `).join("");
+
+      } catch (err) {
+        showToast("Error loading revenue data: " + err.message, "error");
+      }
+    }
+  </script>
+</body>
+</html>

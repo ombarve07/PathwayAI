@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Partners - PATHWAY AI Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge" style="background:linear-gradient(135deg, #6D28D9, #9333EA);">AI</span> <span class="brand-admin-badge">ADMIN</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="admin-dashboard.html">Overview</a></li>
+          <li><a href="manage-students.html">Students</a></li>
+          <li><a href="manage-careers.html">Manage 30 Careers</a></li>
+          <li><a href="manage-questions.html">Question Bank</a></li>
+          <li><a href="manage-courses.html">Courses</a></li>
+          <li><a href="manage-revenue.html">Revenue & Pricing</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div style="margin-bottom: 32px;">
+        <span class="label-caps">Institutional Partners</span>
+        <h1 class="headline-lg" style="margin-top: 4px;">Education & Course Partners</h1>
+        <p class="body-md">Manage relationships with Indian universities, government learning portals, and global platforms.</p>
+      </div>
+
+      <div class="grid-2" style="gap:24px;">
+        <div class="card" style="padding:28px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 class="headline-sm">SWAYAM / NPTEL</h3>
+            <span class="badge badge-success">Govt of India</span>
+          </div>
+          <p class="body-sm" style="margin-bottom:16px;">
+            Official initiative of Ministry of Education, Government of India. Provides free courses by IIT and IISc faculty.
+          </p>
+          <div class="body-sm">Commission: <strong>0% (Public Educational Resource)</strong></div>
+          <div class="body-sm" style="margin-top:4px;">Status: <strong>Active & Verified</strong></div>
+        </div>
+
+        <div class="card" style="padding:28px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 class="headline-sm">Global University Partner</h3>
+            <span class="badge badge-purple">Affiliate Partner</span>
+          </div>
+          <p class="body-sm" style="margin-bottom:16px;">
+            Authorized provider offering certified tracks from University of Michigan, Yale, and Stanford.
+          </p>
+          <div class="body-sm">Commission: <strong>15% per verified enrollment</strong></div>
+          <div class="body-sm" style="margin-top:4px;">Status: <strong>Active & Tracking</strong></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

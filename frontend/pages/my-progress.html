@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill & Project Progress Tracker - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="student-dashboard.html">Overview</a></li>
+          <li><a href="my-progress.html" class="active">Skill Tracker</a></li>
+          <li><a href="roadmap.html">My Roadmap</a></li>
+          <li><a href="course-recommendations.html">Courses</a></li>
+          <li><a href="my-profile.html">Profile</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div style="margin-bottom: 32px;">
+        <span class="label-caps">Continuous Learning Memory</span>
+        <h1 class="headline-lg" style="margin-top: 4px;">My Skill & Evidence Portfolio</h1>
+        <p class="body-md">Mark learned skills, update self-assessed proficiency, and upload verified project evidence.</p>
+      </div>
+
+      <div class="grid-3" style="grid-template-columns: 2fr 1fr; gap: 32px;">
+        <!-- Left: Skill Milestones List -->
+        <div>
+          <div class="card" style="margin-bottom: 24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <h2 class="headline-sm">Core Competency Checklist</h2>
+              <span class="badge badge-primary">Database Synced</span>
+            </div>
+
+            <div id="skillsListContainer" style="display:flex; flex-direction:column; gap:16px;"></div>
+          </div>
+        </div>
+
+        <!-- Right: Submit Project Evidence Form -->
+        <div>
+          <div class="card" style="margin-bottom: 24px;">
+            <h2 class="headline-sm" style="margin-bottom: 8px;">Upload Project Evidence</h2>
+            <p class="body-sm" style="margin-bottom: 20px;">Submit your GitHub repo, research paper, or portfolio link to substantiate your skill progress.</p>
+
+            <form id="projectForm">
+              <div class="form-group">
+                <label class="form-label">Project Title *</label>
+                <input type="text" id="projTitle" class="form-control" placeholder="e.g. Student Management REST API" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Applied Skills</label>
+                <input type="text" id="projSkills" class="form-control" placeholder="e.g. Python, SQLite, Algorithmic Thinking">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Evidence / GitHub / Drive URL *</label>
+                <input type="url" id="projUrl" class="form-control" placeholder="https://github.com/..." required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Brief Description</label>
+                <textarea id="projDesc" class="form-control" rows="3" placeholder="Explain what problem this project solved..."></textarea>
+              </div>
+
+              <button type="submit" id="btnSubmitProj" class="btn btn-primary btn-full">Submit Project Evidence &rarr;</button>
+            </form>
+          </div>
+
+          <!-- Submitted Projects List -->
+          <div class="card">
+            <h3 class="headline-sm" style="margin-bottom: 12px; font-size:1.125rem;">Submitted Evidence</h3>
+            <div id="projectsList" style="display:flex; flex-direction:column; gap:12px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    let progressData = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!API.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      await loadProgress();
+
+      // Submit project form
+      document.getElementById("projectForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("btnSubmitProj");
+        btn.disabled = true;
+        btn.textContent = "Submitting...";
+
+        try {
+          const title = document.getElementById("projTitle").value.trim();
+          const desc = document.getElementById("projDesc").value.trim();
+          const url = document.getElementById("projUrl").value.trim();
+          const skills = document.getElementById("projSkills").value.trim();
+
+          await API.progress.submitProject(title, desc, url, skills);
+          showToast("Project evidence saved to database!", "success");
+          e.target.reset();
+          await loadProgress();
+        } catch (err) {
+          showToast(err.message, "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Submit Project Evidence →";
+        }
+      });
+    });
+
+    async function loadProgress() {
+      try {
+        progressData = await API.progress.get();
+        renderSkills(progressData.skills_progress);
+        renderProjects(progressData.projects);
+      } catch (err) {
+        showToast("Error loading progress: " + err.message, "error");
+      }
+    }
+
+    function renderSkills(skills) {
+      const container = document.getElementById("skillsListContainer");
+      container.innerHTML = skills.map(sk => `
+        <div style="border: 1px solid var(--color-border); padding: 16px; border-radius: var(--radius-sm); background: #FFFFFF;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <div>
+              <strong style="color:var(--color-tertiary); font-size:0.9375rem;">${sk.name}</strong>
+              <span class="badge" style="margin-left:6px;">${sk.category}</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-weight:700; color:var(--color-primary); font-size:0.875rem;">${sk.proficiency_level}%</span>
+              <button onclick="editSkill(${sk.skill_id}, ${sk.proficiency_level})" class="btn btn-secondary btn-sm" style="height:26px; padding:0 8px; font-size:0.75rem;">Edit</button>
+            </div>
+          </div>
+          <div style="background:#E5E7EB; border-radius:9999px; height:6px; overflow:hidden;">
+            <div style="background:var(--color-primary); height:100%; width:${sk.proficiency_level}%;"></div>
+          </div>
+          ${sk.evidence_note ? `<div class="body-sm" style="margin-top:6px; font-style:italic;">Note: ${sk.evidence_note}</div>` : ''}
+        </div>
+      `).join("");
+    }
+
+    function renderProjects(projects) {
+      const container = document.getElementById("projectsList");
+      if (!projects || projects.length === 0) {
+        container.innerHTML = `<p class="body-sm" style="color:var(--color-muted);">No projects submitted yet.</p>`;
+        return;
+      }
+
+      container.innerHTML = projects.map(p => `
+        <div style="border:1px solid var(--color-border); padding:12px; border-radius:var(--radius-sm); font-size:0.875rem;">
+          <div style="font-weight:600; color:var(--color-tertiary);">${p.title}</div>
+          <div class="body-sm" style="margin:4px 0;">${p.description}</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+            <span class="badge">${p.skills_applied || 'Practical Skills'}</span>
+            <a href="${p.github_or_file_url}" target="_blank" style="font-size:0.8125rem; color:var(--color-primary);">Open Link ↗</a>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function editSkill(skillId, currentLevel) {
+      const newLevel = prompt("Enter updated proficiency percentage (0 to 100):", currentLevel);
+      if (newLevel === null) return;
+      const parsed = parseInt(newLevel);
+      if (isNaN(parsed) || parsed < 0 || parsed > 100) {
+        showToast("Please enter a valid number between 0 and 100.", "error");
+        return;
+      }
+      const note = prompt("Optional evidence note (e.g. read textbook, finished project):", "");
+
+      try {
+        await API.progress.updateSkill(skillId, parsed, note || "");
+        showToast("Skill progress saved permanently!", "success");
+        await loadProgress();
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    }
+  </script>
+</body>
+</html>

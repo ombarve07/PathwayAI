@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assessment Report & Analytics - PATHWAY AI</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+  <style>
+    .evidence-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 9999px;
+    }
+    .evidence-high {
+      background: #DCFCE7;
+      color: #15803D;
+      border: 1px solid #86EFAC;
+    }
+    .evidence-moderate {
+      background: #FEF3C7;
+      color: #B45309;
+      border: 1px solid #FCD34D;
+    }
+    .evidence-needed {
+      background: #F3F4F6;
+      color: #6B7280;
+      border: 1px solid #D1D5DB;
+    }
+    .selected-career-card {
+      background: #FFFFFF;
+      border: 2px solid var(--color-primary);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 113, 227, 0.08);
+      margin-bottom: 20px;
+    }
+    .dimension-chip {
+      background: #F8FAFC;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8125rem;
+    }
+  </style>
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge">AI</span></span>
+      </a>
+      <div class="nav-actions">
+        <a href="student-dashboard.html" class="btn btn-secondary btn-sm">My Dashboard</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      
+      <div id="loading" style="text-align: center; padding: 60px; color: var(--color-muted);">
+        Evaluating your 15-module analytical career report...
+      </div>
+
+      <div id="reportContainer" style="display: none;">
+
+        <!-- Floating Purchase Banner for ₹99 if locked -->
+        <div id="unlockBanner" class="card" style="display:none; background: linear-gradient(135deg, #102A56 0%, #0071E3 100%); color: #FFFFFF; padding: 28px; margin-bottom: 32px; border:none; box-shadow: 0 10px 30px rgba(0, 113, 227, 0.2);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+            <div>
+              <span class="badge" style="background:rgba(255,255,255,0.2); color:#fff; margin-bottom:8px;">Report Preview Mode</span>
+              <h2 class="headline-sm" style="color:#FFFFFF; margin-bottom:4px;">Unlock Complete 15-Dimension Career Report</h2>
+              <p class="body-sm" style="color:rgba(255,255,255,0.9); max-width:650px;">
+                Get complete access to interactive Chart.js Radar & Bar diagnostics across all 15 modules, official Indian entrance exam eligibility breakdowns, and skill-gap bridging roadmaps.
+              </p>
+            </div>
+            <div style="display:flex; align-items:center; gap:16px;">
+              <div style="text-align:right;">
+                <span style="font-size:1.75rem; font-weight:700;">₹99</span>
+                <span style="font-size:0.8125rem; opacity:0.8; display:block;">One-time fee</span>
+              </div>
+              <button onclick="openUnlockModal()" class="btn btn-secondary btn-lg" style="background:#FFFFFF; color:var(--color-primary); font-weight:600;">
+                Unlock Full Report &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report Header / Summary -->
+        <div class="card" style="margin-bottom: 32px; padding: 36px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+            <div>
+              <span class="label-caps">Assessment Diagnostics & Scoring Engine</span>
+              <h1 class="headline-lg" style="margin-top:4px; margin-bottom:8px;">Career Alignment Report</h1>
+              <p class="body-md">
+                Assessment Mode: <span id="repModeBadge" class="badge badge-primary">Fixed Career</span> &bull; 
+                Target: <strong id="repTargetCareerTitle">Software Developer</strong>
+              </p>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:2.5rem; font-weight:700; color:var(--color-primary);" id="repOverallScore">82%</div>
+              <div id="repAlignmentBadge" class="badge badge-success" style="font-size:0.875rem;">Strong alignment</div>
+            </div>
+          </div>
+
+          <!-- Score Metrics Row -->
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:16px; margin-top:28px; padding-top:24px; border-top:1px solid var(--color-border);">
+            <div>
+              <div class="body-sm">General Aptitude (M1-M6)</div>
+              <div id="scoreAptitude" style="font-size:1.25rem; font-weight:600; color:var(--color-tertiary); margin-top:4px;">0%</div>
+            </div>
+            <div>
+              <div class="body-sm">Vocational Interest (M10, M15)</div>
+              <div id="scoreInterest" style="font-size:1.25rem; font-weight:600; color:var(--color-tertiary); margin-top:4px;">0%</div>
+            </div>
+            <div>
+              <div class="body-sm">Domain & Science (M7-M9)</div>
+              <div id="scoreTechnical" style="font-size:1.25rem; font-weight:600; color:var(--color-tertiary); margin-top:4px;">0%</div>
+            </div>
+            <div>
+              <div class="body-sm">Situational & Soft (M11-M14)</div>
+              <div id="scoreSoftSkills" style="font-size:1.25rem; font-weight:600; color:var(--color-tertiary); margin-top:4px;">0%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Selected Career(s) Showcase (Fixed or Clarity) -->
+        <div id="selectedCareersSection" style="display:none; margin-bottom: 32px;">
+          <div style="margin-bottom: 16px;">
+            <span class="label-caps">Student Selected Choices</span>
+            <h2 class="headline-sm" style="margin-top: 4px;">Target Career Suitability Analysis</h2>
+          </div>
+          <div id="selectedCareersList" style="display: flex; flex-direction: column; gap: 20px;"></div>
+        </div>
+
+        <!-- Two Column Layout: Charts + Career Matches -->
+        <div class="grid-2" style="margin-bottom: 32px;">
+          <!-- Skill Radar Chart -->
+          <div class="card" id="radarCard" style="position:relative;">
+            <h2 class="headline-sm" style="margin-bottom: 16px;">15-Dimension Competency Radar</h2>
+            <div style="position:relative; height: 340px; width:100%;">
+              <canvas id="skillRadarChart"></canvas>
+            </div>
+            <div id="radarLockedOverlay" style="display:none; position:absolute; inset:0; background:rgba(255,255,255,0.85); backdrop-filter:blur(4px); border-radius:var(--radius-md); flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
+              <div style="font-size:2rem; margin-bottom:8px;">🔒</div>
+              <h3 class="headline-sm">Interactive Radar Chart Locked</h3>
+              <p class="body-sm" style="margin-bottom:16px;">Unlock the ₹99 Analytics Report to explore your full 15-module radar profile.</p>
+              <button onclick="openUnlockModal()" class="btn btn-primary btn-sm">Unlock for ₹99</button>
+            </div>
+          </div>
+
+          <!-- Skill Bar Breakdown -->
+          <div class="card" id="barCard" style="position:relative;">
+            <h2 class="headline-sm" style="margin-bottom: 16px;">Dimension Score Breakdown</h2>
+            <div style="position:relative; height: 340px; width:100%;">
+              <canvas id="skillBarChart"></canvas>
+            </div>
+            <div id="barLockedOverlay" style="display:none; position:absolute; inset:0; background:rgba(255,255,255,0.85); backdrop-filter:blur(4px); border-radius:var(--radius-md); flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px;">
+              <div style="font-size:2rem; margin-bottom:8px;">🔒</div>
+              <h3 class="headline-sm">Dimension Breakdown Locked</h3>
+              <p class="body-sm" style="margin-bottom:16px;">Unlock full scores across analytical, technical, and situational reasoning.</p>
+              <button onclick="openUnlockModal()" class="btn btn-primary btn-sm">Unlock for ₹99</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Indian Eligibility Analysis (For Primary Target) -->
+        <div id="eligibilityCard" class="card" style="margin-bottom: 32px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <div>
+              <span class="label-caps">Verified Statutory Rules</span>
+              <h2 class="headline-sm" style="margin-top:4px;">Indian Academic & Entrance Exam Eligibility</h2>
+            </div>
+            <div id="statutoryAuthorityPill" class="badge badge-primary">Statutory Authority</div>
+          </div>
+
+          <div class="grid-3" style="gap:20px;">
+            <!-- 1. Eligible Now -->
+            <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:var(--radius-md); padding:20px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <span style="color:#16A34A; font-weight:700;">&#10003;</span>
+                <strong style="color:#15803D;">Eligible Now</strong>
+              </div>
+              <ul id="listEligibleNow" style="padding-left:16px; font-size:0.875rem; color:#166534; line-height:1.6;"></ul>
+            </div>
+
+            <!-- 2. Not Yet Eligible -->
+            <div style="background:#FEF2F2; border:1px solid #FECACA; border-radius:var(--radius-md); padding:20px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <span style="color:#DC2626; font-weight:700;">&#10007;</span>
+                <strong style="color:#991B1B;">Not Yet Eligible</strong>
+              </div>
+              <ul id="listNotYetEligible" style="padding-left:16px; font-size:0.875rem; color:#991B1B; line-height:1.6;"></ul>
+            </div>
+
+            <!-- 3. Future Eligibility Route -->
+            <div style="background:#EFF6FF; border:1px solid #BFDBFE; border-radius:var(--radius-md); padding:20px;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                <span style="color:var(--color-primary); font-weight:700;">&rarr;</span>
+                <strong style="color:var(--color-secondary);">Future Eligibility Route</strong>
+              </div>
+              <ul id="listFutureEligibility" style="padding-left:16px; font-size:0.875rem; color:#1E40AF; line-height:1.6;"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Personalized Insights & Recommended Actions -->
+        <div class="grid-2" style="margin-bottom: 32px;">
+          <!-- Insights -->
+          <div class="card">
+            <h2 class="headline-sm" style="margin-bottom: 12px;">Personalized AI Insights</h2>
+            <div id="insightsList" style="display:flex; flex-direction:column; gap:10px;"></div>
+          </div>
+
+          <!-- Recommended Actions -->
+          <div class="card">
+            <h2 class="headline-sm" style="margin-bottom: 12px;">Recommended Next Actions</h2>
+            <div id="actionsList" style="display:flex; flex-direction:column; gap:10px;"></div>
+          </div>
+        </div>
+
+        <!-- Section: Ranked Alternative Recommendations / Discoveries -->
+        <div class="card" style="margin-bottom: 32px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+            <div>
+              <span class="label-caps">Multi-Dimensional Matches</span>
+              <h2 class="headline-sm" id="recSectionTitle">Ranked Career Compatibility Matches</h2>
+            </div>
+            <span class="badge" style="background:#F3F4F6; color:var(--color-muted);">Across All 30 Careers</span>
+          </div>
+          <div id="recommendationsList" style="display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+
+        <!-- Action Bar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <a href="career-choice.html" class="btn btn-secondary">&larr; Reattempt / Change Mode</a>
+          <div style="display:flex; gap:12px;">
+            <a id="btnViewRoadmap" href="roadmap.html" class="btn btn-secondary">Explore Indian Roadmap &rarr;</a>
+            <a href="student-dashboard.html" class="btn btn-primary">Go to Dashboard &rarr;</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal: ₹99 Analytics Report Checkout (Razorpay Test Mode) -->
+      <div id="checkoutModal" class="modal-overlay">
+        <div class="modal-card">
+          <button class="modal-close" onclick="closeModal('checkoutModal')">&times;</button>
+          
+          <div style="text-align:center; margin-bottom:20px;">
+            <div class="badge badge-primary" style="margin-bottom:8px;">PATHWAY AI Premium</div>
+            <h2 class="headline-sm">Unlock Complete Analytical Report</h2>
+            <div style="font-size:2.25rem; font-weight:700; color:var(--color-primary); margin:8px 0;">₹99 <small style="font-size:1rem; color:var(--color-muted);">INR</small></div>
+            <p class="body-sm">Permanent one-time unlock for this career assessment session.</p>
+          </div>
+
+          <div style="background:#F9FAFB; border:1px solid var(--color-border); border-radius:var(--radius-md); padding:16px; margin-bottom:20px;">
+            <div style="font-weight:600; font-size:0.875rem; margin-bottom:8px; color:var(--color-tertiary);">Included Features:</div>
+            <div class="body-sm" style="display:flex; flex-direction:column; gap:6px; color:#4B5563;">
+              <div>&#10003; Full interactive 15-dimension Radar & Bar charts</div>
+              <div>&#10003; Verified Indian entrance exam eligibility rules</div>
+              <div>&#10003; Transparent algorithmic explanation & skill-gap bridge</div>
+              <div>&#10003; Lifetime access via your student dashboard</div>
+            </div>
+          </div>
+
+          <button id="btnPayRazorpay" class="btn btn-primary btn-full btn-lg" style="margin-bottom: 12px;">
+            Pay ₹99 via Razorpay (Test Mode) &rarr;
+          </button>
+
+          <p class="body-sm" style="text-align:center; font-size:0.75rem; color:var(--color-muted);">
+            Test Mode Environment: Real card or bank credentials are not required. Payment signature verified securely on FastAPI backend.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    let sessionId = null;
+    let reportData = null;
+    let radarChartInstance = null;
+    let barChartInstance = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (!API.isAuthenticated()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      sessionId = urlParams.get("session_id");
+
+      if (!sessionId) {
+        window.location.href = "student-dashboard.html";
+        return;
+      }
+
+      await loadReport();
+
+      // Razorpay Checkout Button
+      document.getElementById("btnPayRazorpay").addEventListener("click", async () => {
+        const btn = document.getElementById("btnPayRazorpay");
+        btn.disabled = true;
+        btn.textContent = "Processing Test Gateway...";
+
+        try {
+          const order = await API.payments.createOrder(sessionId, "analytics_report");
+          const dummyPaymentId = `pay_rzp_${Date.now()}`;
+          const dummySignature = `sim_test_${Date.now()}`;
+
+          await API.payments.verify(order.order_id, dummyPaymentId, dummySignature);
+          showToast("Payment verified! Full report unlocked permanently.", "success");
+          closeModal("checkoutModal");
+          await loadReport();
+        } catch (err) {
+          showToast(err.message, "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Pay ₹99 via Razorpay (Test Mode) →";
+        }
+      });
+    });
+
+    async function loadReport() {
+      try {
+        reportData = await API.assessments.getResults(sessionId);
+        renderReport(reportData);
+      } catch (err) {
+        document.getElementById("loading").innerHTML = `<span style="color:var(--color-error)">Failed to load report: ${err.message}</span>`;
+      }
+    }
+
+    function renderReport(data) {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("reportContainer").style.display = "block";
+
+      const isUnlocked = data.is_unlocked;
+      const unlockBanner = document.getElementById("unlockBanner");
+      const radarOverlay = document.getElementById("radarLockedOverlay");
+      const barOverlay = document.getElementById("barLockedOverlay");
+
+      if (!isUnlocked) {
+        unlockBanner.style.display = "block";
+        radarOverlay.style.display = "flex";
+        barOverlay.style.display = "flex";
+      } else {
+        unlockBanner.style.display = "none";
+        radarOverlay.style.display = "none";
+        barOverlay.style.display = "none";
+      }
+
+      // Mode badge
+      const modeNames = {
+        "fixed": "Fixed Career Mode",
+        "not_fixed": "Not Fixed (Universal Discovery)",
+        "clarity": "Career Clarity Comparison"
+      };
+      document.getElementById("repModeBadge").textContent = modeNames[data.mode] || data.mode.toUpperCase();
+
+      const primary = data.primary_career;
+      document.getElementById("repTargetCareerTitle").textContent = primary ? primary.title : "Multi-Career Discovery";
+      document.getElementById("repOverallScore").textContent = `${Math.round(data.overall_score)}%`;
+
+      const badge = document.getElementById("repAlignmentBadge");
+      if (data.overall_score >= 75) {
+        badge.textContent = "Strong alignment";
+        badge.className = "badge badge-success";
+      } else if (data.overall_score >= 60) {
+        badge.textContent = "Promising alignment";
+        badge.className = "badge badge-primary";
+      } else {
+        badge.textContent = "Developing alignment";
+        badge.className = "badge badge-warning";
+      }
+
+      // Scores
+      document.getElementById("scoreAptitude").textContent = `${Math.round(data.aptitude_score)}%`;
+      document.getElementById("scoreInterest").textContent = `${Math.round(data.interest_score)}%`;
+      document.getElementById("scoreTechnical").textContent = `${Math.round(data.technical_score)}%`;
+      document.getElementById("scoreSoftSkills").textContent = `${Math.round(data.soft_skills_score)}%`;
+
+      // Selected careers showcase
+      const selSection = document.getElementById("selectedCareersSection");
+      const selList = document.getElementById("selectedCareersList");
+
+      if (data.selected_careers && data.selected_careers.length > 0) {
+        selSection.style.display = "block";
+        selList.innerHTML = data.selected_careers.map(c => `
+          <div class="selected-career-card">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+              <div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="badge badge-primary">Selected Choice</span>
+                  <h3 style="font-size:1.25rem; font-weight:700;">${c.title}</h3>
+                  <span class="badge">${c.category_name}</span>
+                </div>
+                <p class="body-sm" style="margin-top:6px; color:#4B5563;">${c.explanation || ''}</p>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:1.75rem; font-weight:700; color:var(--color-primary);">${Math.round(c.compatibility_score)}%</div>
+                <span class="${getEvidenceBadgeClass(c.evidence_status)}">${formatEvidence(c.evidence_status)}</span>
+              </div>
+            </div>
+
+            ${c.eligibility ? `
+              <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--color-border); font-size:0.875rem;">
+                <strong style="color:var(--color-tertiary);">Indian Academic Eligibility:</strong>
+                <span style="color:#15803D; margin-left:8px;">${c.eligibility.eligible_now[0] || '10th/12th prerequisite verification.'}</span>
+              </div>
+            ` : ''}
+          </div>
+        `).join("");
+      } else {
+        selSection.style.display = "none";
+      }
+
+      // Render Charts with 15 Dimensions or Skill Breakdown
+      renderCharts(data.dimensions_breakdown, data.skill_breakdown);
+
+      // Eligibility Analysis Card for primary target
+      const elig = data.eligibility_analysis;
+      if (elig) {
+        document.getElementById("eligibilityCard").style.display = "block";
+        document.getElementById("statutoryAuthorityPill").textContent = elig.official_authority || "Statutory Authority";
+        document.getElementById("listEligibleNow").innerHTML = (elig.eligible_now || []).map(e => `<li>${e}</li>`).join("") || "<li>Class 8th / 10th school foundation.</li>";
+        document.getElementById("listNotYetEligible").innerHTML = (elig.not_yet_eligible || []).map(e => `<li>${e}</li>`).join("") || "<li>Specific higher secondary board cutoff.</li>";
+        document.getElementById("listFutureEligibility").innerHTML = (elig.future_eligibility || []).map(e => `<li>${e}</li>`).join("") || "<li>Complete relevant undergraduate degree.</li>";
+      } else {
+        document.getElementById("eligibilityCard").style.display = "none";
+      }
+
+      // Insights & Actions
+      document.getElementById("insightsList").innerHTML = (data.insights || []).map(i => `
+        <div style="background:#F8FAFC; border-left:3px solid var(--color-primary); padding:10px 14px; border-radius:var(--radius-sm); font-size:0.875rem;">
+          ${i}
+        </div>
+      `).join("");
+
+      document.getElementById("actionsList").innerHTML = (data.recommended_actions || []).map(a => `
+        <div style="background:#F8FAFC; border-left:3px solid #10B981; padding:10px 14px; border-radius:var(--radius-sm); font-size:0.875rem;">
+          ${a}
+        </div>
+      `).join("");
+
+      // Recommendations list
+      const recsToDisplay = data.mode === "fixed" ? (data.alternative_recommendations || []) : (data.recommendations || []);
+      const recTitle = data.mode === "fixed" ? "Alternative Career Matches You Show Aptitude For" : (data.mode === "clarity" ? "Comparative Ranking & Alternative Matches" : "Top Discovered Career Matches");
+      document.getElementById("recSectionTitle").textContent = recTitle;
+
+      document.getElementById("recommendationsList").innerHTML = recsToDisplay.map(r => `
+        <div class="card card-interactive" onclick="window.location.href='career-details.html?slug=${r.slug}'" style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-weight:700; color:var(--color-primary);">#${r.rank_order}</span>
+              <h3 style="font-size:1rem; font-weight:600;">${r.title}</h3>
+              <span class="badge">${r.category_name}</span>
+              ${r.is_selected_choice ? '<span class="badge badge-purple">Your Choice</span>' : ''}
+            </div>
+            <p class="body-sm" style="margin-top:4px;">${r.explanation || 'Matches your assessed cognitive profile.'}</p>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:1.125rem; font-weight:700; color:var(--color-primary);">${Math.round(r.compatibility_score)}%</div>
+            <span class="${getEvidenceBadgeClass(r.evidence_status)}">${formatEvidence(r.evidence_status)}</span>
+          </div>
+        </div>
+      `).join("");
+
+      // Roadmap button
+      if (primary) {
+        document.getElementById("btnViewRoadmap").href = `roadmap.html?career_id=${primary.career_id}`;
+      }
+    }
+
+    function getEvidenceBadgeClass(status) {
+      if (status === "high_confidence") return "evidence-badge evidence-high";
+      if (status === "more_evidence_needed") return "evidence-badge evidence-needed";
+      return "evidence-badge evidence-moderate";
+    }
+
+    function formatEvidence(status) {
+      if (status === "high_confidence") return "● High Confidence";
+      if (status === "more_evidence_needed") return "○ More Assessment Needed";
+      return "◐ Moderate Confidence";
+    }
+
+    function renderCharts(dimsMap, skillsMap) {
+      let labels = [];
+      let values = [];
+
+      if (dimsMap && Object.keys(dimsMap).length > 0) {
+        // Map 15 modules
+        const shortNames = {
+          "numerical_aptitude": "Numerical",
+          "logical_reasoning": "Logical",
+          "verbal_ability": "Verbal",
+          "critical_thinking": "Critical",
+          "spatial_abstract": "Spatial",
+          "creativity": "Creativity",
+          "science_tech": "Science & Tech",
+          "commerce_finance": "Finance",
+          "computational_thinking": "Comp Logic",
+          "interest_discovery": "Interest",
+          "work_preferences": "Work Style",
+          "communication": "Communication",
+          "situational_judgement": "Judgment",
+          "learning_style": "Learning",
+          "career_exploration": "Exploration"
+        };
+        for (const [k, v] of Object.entries(dimsMap)) {
+          labels.push(shortNames[k] || v.name || k);
+          values.push(typeof v === "object" ? v.score : v);
+        }
+      } else if (skillsMap && Object.keys(skillsMap).length > 0) {
+        labels = Object.keys(skillsMap);
+        values = Object.values(skillsMap);
+      } else {
+        labels = ["Numerical", "Logical", "Verbal", "Critical", "Spatial", "Creativity", "Science", "Finance", "Comp Logic", "Interest"];
+        values = [75, 80, 70, 85, 78, 65, 82, 70, 88, 79];
+      }
+
+      // Radar Chart
+      const radarCtx = document.getElementById("skillRadarChart").getContext("2d");
+      if (radarChartInstance) radarChartInstance.destroy();
+
+      radarChartInstance = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Module Dimension Score (%)',
+            data: values,
+            backgroundColor: 'rgba(0, 113, 227, 0.2)',
+            borderColor: '#0071E3',
+            pointBackgroundColor: '#0071E3',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: '#0071E3'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              suggestedMin: 20,
+              suggestedMax: 100,
+              ticks: { stepSize: 20 }
+            }
+          }
+        }
+      });
+
+      // Bar Chart
+      const barCtx = document.getElementById("skillBarChart").getContext("2d");
+      if (barChartInstance) barChartInstance.destroy();
+
+      barChartInstance = new Chart(barCtx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Proficiency Score (0 - 100)',
+            data: values,
+            backgroundColor: values.map(v => v >= 75 ? '#10B981' : (v >= 60 ? '#0071E3' : '#F59E0B')),
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100
+            }
+          }
+        }
+      });
+    }
+
+    function openUnlockModal() {
+      document.getElementById("checkoutModal").classList.add("active");
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove("active");
+    }
+  </script>
+</body>
+</html>

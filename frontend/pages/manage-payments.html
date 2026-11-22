@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Payments - PATHWAY AI Admin</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="icon" type="image/png" href="../assets/favicon.png">
+</head>
+<body style="background-color: var(--color-neutral);">
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <a href="../index.html" class="brand-logo">
+        <img src="../assets/logo-badge.png" alt="PATHWAY AI Logo" class="brand-logo-img">
+        <span class="brand-name">PATHWAY <span class="brand-ai-badge" style="background:linear-gradient(135deg, #6D28D9, #9333EA);">AI</span> <span class="brand-admin-badge">ADMIN</span></span>
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="admin-dashboard.html">Overview</a></li>
+          <li><a href="manage-students.html">Students</a></li>
+          <li><a href="manage-careers.html">Manage 30 Careers</a></li>
+          <li><a href="manage-questions.html">Question Bank</a></li>
+          <li><a href="manage-revenue.html" class="active">Revenue & Pricing</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button onclick="API.auth.logout()" class="btn btn-outline-dark btn-sm">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div style="margin-bottom: 32px;">
+        <span class="label-caps">Financial Auditing</span>
+        <h1 class="headline-lg" style="margin-top: 4px;">Transactions & Payment Records</h1>
+        <p class="body-md">Real-time ledger of Razorpay test orders and verified report unlocks.</p>
+      </div>
+
+      <div class="card" style="padding: 24px;">
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.9375rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--color-border); color:var(--color-muted);">
+                <th style="padding:12px;">Order ID</th>
+                <th style="padding:12px;">Payment ID</th>
+                <th style="padding:12px;">Item</th>
+                <th style="padding:12px;">Amount</th>
+                <th style="padding:12px;">Status</th>
+                <th style="padding:12px;">Created At</th>
+              </tr>
+            </thead>
+            <tbody id="paymentTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const user = API.getUser();
+      if (!user || !user.is_admin) {
+        window.location.href = "admin-login.html";
+        return;
+      }
+
+      try {
+        const payments = await API.admin.getRevenue();
+        const tbody = document.getElementById("paymentTableBody");
+
+        if (!payments || payments.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="padding:32px; text-align:center; color:var(--color-muted);">No payment orders logged yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = payments.map(p => `
+          <tr style="border-bottom: 1px solid var(--color-border);">
+            <td style="padding:14px 12px; font-family:monospace; font-weight:600;">${p.order_id}</td>
+            <td style="padding:14px 12px; font-family:monospace; color:var(--color-muted);">${p.payment_id || 'Pending'}</td>
+            <td style="padding:14px 12px;"><span class="badge">${p.item_type}</span></td>
+            <td style="padding:14px 12px; font-weight:700; color:var(--color-primary);">₹${p.amount}</td>
+            <td style="padding:14px 12px;"><span class="badge ${p.status === 'success' ? 'badge-success' : 'badge-warning'}">${p.status.toUpperCase()}</span></td>
+            <td style="padding:14px 12px; font-size:0.8125rem; color:var(--color-muted);">${new Date(p.created_at).toLocaleString()}</td>
+          </tr>
+        `).join("");
+
+      } catch (err) {
+        showToast("Error loading payments: " + err.message, "error");
+      }
+    });
+  </script>
+</body>
+</html>
